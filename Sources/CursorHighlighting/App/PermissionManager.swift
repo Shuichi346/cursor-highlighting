@@ -13,8 +13,8 @@ final class PermissionManager {
         isAccessibilityGranted = AXIsProcessTrusted()
 
         if !isAccessibilityGranted {
-            // システムプロンプトを表示
-            let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
+            // Swift 6ではkAXTrustedCheckOptionPromptが可変グローバル変数として扱われるため、定数文字列を直接使用
+            let options = ["AXTrustedCheckOptionPrompt": true] as CFDictionary
             _ = AXIsProcessTrustedWithOptions(options)
             startPolling()
         }

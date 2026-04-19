@@ -1,7 +1,7 @@
-import SwiftUI
-import Settings
 import Defaults
 import LaunchAtLogin
+import Settings
+import SwiftUI
 
 // その他設定タブ
 struct OtherSettingsView: View {

@@ -1,10 +1,10 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 6.2
 import PackageDescription
 
 let package = Package(
     name: "CursorHighlighting",
     defaultLocalization: "en",
-    platforms: [.macOS(.v15)],
+    platforms: [.macOS(.v26)],
     products: [
         .executable(name: "CursorHighlighting", targets: ["CursorHighlighting"])
     ],
@@ -24,8 +24,9 @@ let package = Package(
                 "Defaults",
             ],
             path: "Sources/CursorHighlighting",
+            exclude: ["Resources/Info.plist"],
             resources: [.process("Resources")]
-        ),
+        )
     ],
-    swiftLanguageVersions: [.v6]
+    swiftLanguageModes: [.v6]
 )

@@ -1,6 +1,6 @@
 import AppKit
-import Settings
 import Defaults
+import Settings
 
 // アプリ全体の状態管理
 @MainActor

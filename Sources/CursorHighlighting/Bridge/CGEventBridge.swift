@@ -1,4 +1,5 @@
-import CoreGraphics
+@preconcurrency import CoreFoundation
+@preconcurrency import CoreGraphics
 import Foundation
 
 // CGEventTapコールバックからAsyncStreamへの安全なブリッジ型
@@ -18,6 +19,20 @@ final class ContinuationBox: @unchecked Sendable {
     }
 }
 
+// CGEventTap関連のCFオブジェクトを@Sendableクロージャに安全に渡すためのボックス型
+// CFMachPort・CFRunLoopSourceは実質スレッドセーフだがSendable準拠がない
+final class EventTapBox: @unchecked Sendable {
+    let eventTap: CFMachPort
+    let runLoopSource: CFRunLoopSource
+    let pointerBits: Int
+
+    init(eventTap: CFMachPort, runLoopSource: CFRunLoopSource, pointerBits: Int) {
+        self.eventTap = eventTap
+        self.runLoopSource = runLoopSource
+        self.pointerBits = pointerBits
+    }
+}
+
 // Cコンベンションのイベントタップコールバック
 private func cgEventCallback(
     proxy: CGEventTapProxy,
@@ -31,7 +46,6 @@ private func cgEventCallback(
 
     // タップが無効化された場合は再有効化
     if type == .tapDisabledByTimeout || type == .tapDisabledByUserInput {
-        // タップの再有効化はstreamの外で行う必要がある
         return Unmanaged.passUnretained(event)
     }
 
@@ -51,7 +65,8 @@ private func cgEventCallback(
 // キーイベントのAsyncStreamを生成するファクトリ関数
 // 戻り値がnilの場合はアクセシビリティ権限が未付与
 @MainActor
-func createKeyEventStream() -> (stream: AsyncStream<BridgedKeyEvent>, cancel: @Sendable () -> Void)? {
+func createKeyEventStream() -> (stream: AsyncStream<BridgedKeyEvent>, cancel: @Sendable () -> Void)?
+{
     let (stream, continuation) = AsyncStream.makeStream(
         of: BridgedKeyEvent.self,
         bufferingPolicy: .bufferingNewest(64)
@@ -63,14 +78,16 @@ func createKeyEventStream() -> (stream: AsyncStream<BridgedKeyEvent>, cancel: @S
     // keyDownイベントのみをリッスン
     let eventMask: CGEventMask = (1 << CGEventType.keyDown.rawValue)
 
-    guard let eventTap = CGEvent.tapCreate(
-        tap: .cgSessionEventTap,
-        place: .headInsertEventTap,
-        options: .listenOnly,
-        eventsOfInterest: eventMask,
-        callback: cgEventCallback,
-        userInfo: pointer
-    ) else {
+    guard
+        let eventTap = CGEvent.tapCreate(
+            tap: .cgSessionEventTap,
+            place: .headInsertEventTap,
+            options: .listenOnly,
+            eventsOfInterest: eventMask,
+            callback: cgEventCallback,
+            userInfo: pointer
+        )
+    else {
         // 権限未付与 — Unmanagedを解放してストリームを終了
         Unmanaged<ContinuationBox>.fromOpaque(pointer).release()
         continuation.finish()
@@ -78,15 +95,23 @@ func createKeyEventStream() -> (stream: AsyncStream<BridgedKeyEvent>, cancel: @S
     }
 
     // メインRunLoopに追加
-    let runLoopSource = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, eventTap, 0)
+    let runLoopSource = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, eventTap, 0)!
     CFRunLoopAddSource(CFRunLoopGetMain(), runLoopSource, .commonModes)
     CGEvent.tapEnable(tap: eventTap, enable: true)
 
+    // 非Sendable型をSendableボックスに格納してキャプチャ
+    let tapBox = EventTapBox(
+        eventTap: eventTap,
+        runLoopSource: runLoopSource,
+        pointerBits: Int(bitPattern: pointer)
+    )
+
     // キャンセル時のクリーンアップクロージャ
     let cancel: @Sendable () -> Void = {
-        CGEvent.tapEnable(tap: eventTap, enable: false)
-        CFRunLoopRemoveSource(CFRunLoopGetMain(), runLoopSource, .commonModes)
-        Unmanaged<ContinuationBox>.fromOpaque(pointer).release()
+        CGEvent.tapEnable(tap: tapBox.eventTap, enable: false)
+        CFRunLoopRemoveSource(CFRunLoopGetMain(), tapBox.runLoopSource, .commonModes)
+        let ptr = UnsafeMutableRawPointer(bitPattern: tapBox.pointerBits)!
+        Unmanaged<ContinuationBox>.fromOpaque(ptr).release()
         continuation.finish()
     }
 

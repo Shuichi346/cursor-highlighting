@@ -14,7 +14,7 @@ final class KeyStrokeManager {
 
     init() {
         // ホットキー登録
-        KeyboardShortcuts.onKeyUp(for: .toggleKeyStrokes) { [weak self] in
+        KeyboardShortcuts.onKeyUp(for: .toggleKeyStrokes) {
             Defaults[.keyStrokeEnabled].toggle()
         }
 
@@ -37,7 +37,6 @@ final class KeyStrokeManager {
         eventStreamCancel = cancel
 
         // キーイベントを消費してHUDに表示
-        // このTaskは@MainActor上で実行されるため、UIアクセスはコンパイラにより安全性が保証される
         consumeTask = Task { [weak self] in
             for await event in stream {
                 guard let self = self else { break }

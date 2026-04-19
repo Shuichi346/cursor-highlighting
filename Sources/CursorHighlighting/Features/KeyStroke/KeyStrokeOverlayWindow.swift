@@ -1,6 +1,6 @@
 import AppKit
-import SwiftUI
 import Defaults
+import SwiftUI
 
 // キーストロークHUDのオーバーレイウィンドウ管理
 @MainActor

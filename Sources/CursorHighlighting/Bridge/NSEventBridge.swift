@@ -6,6 +6,16 @@ struct BridgedMouseEvent: Sendable {
     let type: NSEvent.EventType
 }
 
+// NSEventモニターを@Sendableクロージャに安全に渡すためのボックス型
+final class MonitorBox: @unchecked Sendable {
+    let globalMonitor: Any?
+    let localMonitor: Any?
+    init(global: Any?, local: Any?) {
+        self.globalMonitor = global
+        self.localMonitor = local
+    }
+}
+
 // マウスイベントのAsyncStreamを生成するファクトリ関数
 @MainActor
 func createMouseEventStream(
@@ -37,13 +47,16 @@ func createMouseEventStream(
         return event
     }
 
+    // モニター参照をSendableなボックスに格納
+    let monitors = MonitorBox(global: globalMonitor, local: localMonitor)
+
     // キャンセルクロージャ
     let cancel: @Sendable () -> Void = {
-        if let globalMonitor {
-            NSEvent.removeMonitor(globalMonitor)
+        if let global = monitors.globalMonitor {
+            NSEvent.removeMonitor(global)
         }
-        if let localMonitor {
-            NSEvent.removeMonitor(localMonitor)
+        if let local = monitors.localMonitor {
+            NSEvent.removeMonitor(local)
         }
         continuation.finish()
     }

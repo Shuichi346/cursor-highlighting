@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:cursor-highlighting}",
+            "name": "Debug CursorHighlighting",
+            "target": "CursorHighlighting",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug CursorHighlighting"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:cursor-highlighting}",
+            "name": "Release CursorHighlighting",
+            "target": "CursorHighlighting",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release CursorHighlighting"
+        }
+    ]
+}

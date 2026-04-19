@@ -1,6 +1,6 @@
 import AppKit
-import SwiftUI
 import Defaults
+import SwiftUI
 
 // Defaults互換のCodable対応カラー型
 struct CodableColor: Codable, Sendable, Equatable, Defaults.Serializable {
@@ -28,7 +28,9 @@ struct CodableColor: Codable, Sendable, Equatable, Defaults.Serializable {
 
     // NSColorへ変換
     var nsColor: NSColor {
-        NSColor(srgbRed: CGFloat(red), green: CGFloat(green), blue: CGFloat(blue), alpha: CGFloat(alpha))
+        NSColor(
+            srgbRed: CGFloat(red), green: CGFloat(green), blue: CGFloat(blue), alpha: CGFloat(alpha)
+        )
     }
 
     // SwiftUI Colorへ変換

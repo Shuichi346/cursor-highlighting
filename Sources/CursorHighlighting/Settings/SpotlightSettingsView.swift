@@ -1,7 +1,7 @@
-import SwiftUI
-import Settings
 import Defaults
 import KeyboardShortcuts
+import Settings
+import SwiftUI
 
 // スポットライト設定タブ
 struct SpotlightSettingsView: View {
@@ -32,13 +32,15 @@ struct SpotlightSettingsView: View {
                 }
             }
             Settings.Section(title: L("settings.spotlight.color")) {
-                ColorPicker(L("settings.spotlight.color"), selection: $selectedColor, supportsOpacity: false)
-                    .onAppear {
-                        selectedColor = spotlightColor.color
-                    }
-                    .onChange(of: selectedColor) { _, newValue in
-                        spotlightColor = CodableColor(nsColor: NSColor(newValue))
-                    }
+                ColorPicker(
+                    L("settings.spotlight.color"), selection: $selectedColor, supportsOpacity: false
+                )
+                .onAppear {
+                    selectedColor = spotlightColor.color
+                }
+                .onChange(of: selectedColor) { _, newValue in
+                    spotlightColor = CodableColor(nsColor: NSColor(newValue))
+                }
             }
         }
     }

@@ -1,5 +1,5 @@
-import SwiftUI
 import Defaults
+import SwiftUI
 
 // メインエントリーポイント：メニューバー専用アプリ
 @main

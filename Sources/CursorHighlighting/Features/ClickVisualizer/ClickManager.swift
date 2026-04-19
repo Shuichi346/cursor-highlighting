@@ -14,7 +14,7 @@ final class ClickManager {
 
     init() {
         // ホットキー登録
-        KeyboardShortcuts.onKeyUp(for: .toggleClicks) { [weak self] in
+        KeyboardShortcuts.onKeyUp(for: .toggleClicks) {
             Defaults[.clickEnabled].toggle()
         }
 

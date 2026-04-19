@@ -1,7 +1,7 @@
-import SwiftUI
-import Settings
 import Defaults
 import KeyboardShortcuts
+import Settings
+import SwiftUI
 
 // キーストローク設定タブ
 struct KeyStrokeSettingsView: View {
