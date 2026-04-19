@@ -39,9 +39,10 @@ struct ClickSettingsView: View {
                 }
             }
             Settings.Section(title: L("settings.clicks.ringSize")) {
-                Slider(value: $ringMaxRadius, in: 15...80, step: 5) {
+                Slider(value: $ringMaxRadius, in: 0...80, step: 5) {
                     Text("\(Int(ringMaxRadius)) px")
                 }
+                .frame(width: 250)
             }
         }
     }

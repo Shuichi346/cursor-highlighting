@@ -17,19 +17,22 @@ struct SpotlightSettingsView: View {
                 KeyboardShortcuts.Recorder(for: .toggleSpotlight)
             }
             Settings.Section(title: L("settings.spotlight.radius")) {
-                Slider(value: $radius, in: 50...400, step: 10) {
+                Slider(value: $radius, in: 0...400, step: 10) {
                     Text("\(Int(radius)) px")
                 }
+                .frame(width: 250)
             }
             Settings.Section(title: L("settings.spotlight.blur")) {
                 Slider(value: $blur, in: 0...100, step: 5) {
                     Text("\(Int(blur)) px")
                 }
+                .frame(width: 250)
             }
             Settings.Section(title: L("settings.spotlight.opacity")) {
-                Slider(value: $opacity, in: 0.1...1.0, step: 0.05) {
+                Slider(value: $opacity, in: 0...1.0, step: 0.05) {
                     Text(String(format: "%.0f%%", opacity * 100))
                 }
+                .frame(width: 250)
             }
             Settings.Section(title: L("settings.spotlight.color")) {
                 ColorPicker(
