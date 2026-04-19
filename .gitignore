@@ -1,28 +1,16 @@
 # macOS
 .DS_Store
 Thumbs.db
+._*
 
-# Xcode
-*.xcodeproj/
-*.xcworkspace/
-xcuserdata/
-DerivedData/
-build/
-*.pbxuser
-*.mode1v3
-*.mode2v3
-*.perspectivev3
-*.moved-aside
-*.hmap
-*.ipa
-*.dSYM.zip
-*.dSYM
-
-# Swift Package Manager
+# Swift / SPM
 .build/
 .swiftpm/
 Package.resolved
+*.xcodeproj
+*.xcworkspace
+xcuserdata/
+DerivedData/
 
-# Build artifacts
-*.app
-*.zip
+# Build output
+build/
