@@ -33,7 +33,6 @@ final class KeyStrokeOverlayWindow {
         self.panel = newPanel
         self.hostingView = hosting
 
-        // 古いエントリを定期的に削除
         startCleanupTask()
     }
 
@@ -57,19 +56,27 @@ final class KeyStrokeOverlayWindow {
         refreshView()
     }
 
-    // フォントサイズ変更を即時反映
+    // フォントサイズ・テーマ変更を即時反映
+    func updateAppearance() {
+        refreshView()
+    }
+
+    // 下位互換: フォントサイズ変更のみの呼び出し
     func updateFontSize() {
         refreshView()
     }
 
-    // ホスティングビューのrootViewを更新
     private func refreshView() {
         moveToCurrentScreenIfNeeded()
         hostingView?.rootView = makeHUDView()
     }
 
     private func makeHUDView() -> KeyStrokeHUDView {
-        KeyStrokeHUDView(entries: entries, fontSize: Defaults[.keyStrokeFontSize])
+        KeyStrokeHUDView(
+            entries: entries,
+            fontSize: Defaults[.keyStrokeFontSize],
+            theme: Defaults[.keyStrokeTheme]
+        )
     }
 
     private func startCleanupTask() {
@@ -88,7 +95,9 @@ final class KeyStrokeOverlayWindow {
     }
 
     private func moveToCurrentScreenIfNeeded() {
-        guard let panel, let screen = preferredScreen(), screen !== panel.currentScreen else { return }
+        guard let panel, let screen = preferredScreen(), screen !== panel.currentScreen else {
+            return
+        }
         panel.move(to: screen)
     }
 

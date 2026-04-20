@@ -13,12 +13,10 @@ final class KeyStrokeManager {
     private var observationTasks: [Task<Void, Never>] = []
 
     init() {
-        // ホットキー登録
         KeyboardShortcuts.onKeyUp(for: .toggleKeyStrokes) {
             Defaults[.keyStrokeEnabled].toggle()
         }
 
-        // 設定変更の監視を開始
         startObserving()
     }
 
@@ -26,9 +24,7 @@ final class KeyStrokeManager {
     func activate() {
         guard !isActive else { return }
 
-        // CGEventTap AsyncStreamを作成（アクセシビリティ権限が必要）
         guard let (stream, cancel) = createKeyEventStream() else {
-            // 権限未付与の場合はリトライせず待機
             return
         }
 
@@ -36,7 +32,6 @@ final class KeyStrokeManager {
         overlayWindow.show()
         eventStreamCancel = cancel
 
-        // キーイベントを消費してHUDに表示
         consumeTask = Task { [weak self] in
             for await event in stream {
                 guard let self = self else { break }
@@ -67,21 +62,30 @@ final class KeyStrokeManager {
         deactivate()
     }
 
-    // Defaults変更の監視
     private func startObserving() {
         applyEnabledState(Defaults[.keyStrokeEnabled])
 
-        observationTasks.append(Task { [weak self] in
-            for await enabled in Defaults.updates(.keyStrokeEnabled, initial: false) {
-                self?.applyEnabledState(enabled)
-            }
-        })
+        observationTasks.append(
+            Task { [weak self] in
+                for await enabled in Defaults.updates(.keyStrokeEnabled, initial: false) {
+                    self?.applyEnabledState(enabled)
+                }
+            })
 
-        observationTasks.append(Task { [weak self] in
-            for await _ in Defaults.updates(.keyStrokeFontSize, initial: false) {
-                self?.overlayWindow.updateFontSize()
-            }
-        })
+        observationTasks.append(
+            Task { [weak self] in
+                for await _ in Defaults.updates(.keyStrokeFontSize, initial: false) {
+                    self?.overlayWindow.updateAppearance()
+                }
+            })
+
+        // テーマ変更の監視
+        observationTasks.append(
+            Task { [weak self] in
+                for await _ in Defaults.updates(.keyStrokeTheme, initial: false) {
+                    self?.overlayWindow.updateAppearance()
+                }
+            })
     }
 
     private func applyEnabledState(_ isEnabled: Bool) {

@@ -11,6 +11,18 @@ struct KeyStrokeEntry: Identifiable, Sendable {
 struct KeyStrokeHUDView: View {
     var entries: [KeyStrokeEntry]
     var fontSize: Double
+    var theme: String
+
+    // テーマに基づくスタイル
+    private var textColor: Color {
+        theme == "light" ? .primary : .white
+    }
+
+    private var backgroundColor: Color {
+        theme == "light"
+            ? Color.white.opacity(0.85)
+            : Color.black.opacity(0.7)
+    }
 
     var body: some View {
         VStack {
@@ -19,12 +31,12 @@ struct KeyStrokeHUDView: View {
                 ForEach(entries.suffix(8)) { entry in
                     Text(entry.text)
                         .font(.system(size: fontSize, weight: .medium, design: .rounded))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(textColor)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 8)
                         .background(
                             RoundedRectangle(cornerRadius: 10)
-                                .fill(.black.opacity(0.7))
+                                .fill(backgroundColor)
                         )
                 }
             }

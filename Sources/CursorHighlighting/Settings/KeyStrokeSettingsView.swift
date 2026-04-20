@@ -24,7 +24,10 @@ struct KeyStrokeSettingsContentView: View {
 
                 Divider().opacity(0.5)
 
-                SettingsRow(label: L("settings.keystrokes.hotkey"), subtitle: L("settings.keystrokes.hotkeyDescription")) {
+                SettingsRow(
+                    label: L("settings.keystrokes.hotkey"),
+                    subtitle: L("settings.keystrokes.hotkeyDescription")
+                ) {
                     KeyboardShortcuts.Recorder(for: .toggleKeyStrokes)
                         .frame(maxWidth: 180)
                 }

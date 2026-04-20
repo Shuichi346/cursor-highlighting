@@ -4,12 +4,14 @@ import AppKit
 extension NSScreen {
     static func containing(_ point: NSPoint) -> NSScreen? {
         screens.first { $0.frame.insetBy(dx: -1, dy: -1).contains(point) }
-            ?? screens.min { $0.frame.distanceSquared(to: point) < $1.frame.distanceSquared(to: point) }
+            ?? screens.min {
+                $0.frame.distanceSquared(to: point) < $1.frame.distanceSquared(to: point)
+            }
     }
 }
 
-private extension NSRect {
-    func distanceSquared(to point: NSPoint) -> CGFloat {
+extension NSRect {
+    fileprivate func distanceSquared(to point: NSPoint) -> CGFloat {
         let dx: CGFloat
         if point.x < minX {
             dx = minX - point.x

@@ -79,11 +79,12 @@ final class ClickManager {
     private func startObserving() {
         applyEnabledState(Defaults[.clickEnabled])
 
-        observationTasks.append(Task { [weak self] in
-            for await enabled in Defaults.updates(.clickEnabled, initial: false) {
-                self?.applyEnabledState(enabled)
-            }
-        })
+        observationTasks.append(
+            Task { [weak self] in
+                for await enabled in Defaults.updates(.clickEnabled, initial: false) {
+                    self?.applyEnabledState(enabled)
+                }
+            })
     }
 
     private func applyEnabledState(_ isEnabled: Bool) {

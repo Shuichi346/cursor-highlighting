@@ -49,33 +49,38 @@ final class SpotlightManager {
     private func startObserving() {
         applyEnabledState(Defaults[.spotlightEnabled])
 
-        observationTasks.append(Task { [weak self] in
-            for await enabled in Defaults.updates(.spotlightEnabled, initial: false) {
-                self?.applyEnabledState(enabled)
-            }
-        })
+        observationTasks.append(
+            Task { [weak self] in
+                for await enabled in Defaults.updates(.spotlightEnabled, initial: false) {
+                    self?.applyEnabledState(enabled)
+                }
+            })
 
         // 個別設定の変更監視
-        observationTasks.append(Task { [weak self] in
-            for await _ in Defaults.updates(.spotlightRadius, initial: false) {
-                self?.overlayWindow.updateSettings()
-            }
-        })
-        observationTasks.append(Task { [weak self] in
-            for await _ in Defaults.updates(.spotlightBlur, initial: false) {
-                self?.overlayWindow.updateSettings()
-            }
-        })
-        observationTasks.append(Task { [weak self] in
-            for await _ in Defaults.updates(.spotlightOpacity, initial: false) {
-                self?.overlayWindow.updateSettings()
-            }
-        })
-        observationTasks.append(Task { [weak self] in
-            for await _ in Defaults.updates(.spotlightColor, initial: false) {
-                self?.overlayWindow.updateSettings()
-            }
-        })
+        observationTasks.append(
+            Task { [weak self] in
+                for await _ in Defaults.updates(.spotlightRadius, initial: false) {
+                    self?.overlayWindow.updateSettings()
+                }
+            })
+        observationTasks.append(
+            Task { [weak self] in
+                for await _ in Defaults.updates(.spotlightBlur, initial: false) {
+                    self?.overlayWindow.updateSettings()
+                }
+            })
+        observationTasks.append(
+            Task { [weak self] in
+                for await _ in Defaults.updates(.spotlightOpacity, initial: false) {
+                    self?.overlayWindow.updateSettings()
+                }
+            })
+        observationTasks.append(
+            Task { [weak self] in
+                for await _ in Defaults.updates(.spotlightColor, initial: false) {
+                    self?.overlayWindow.updateSettings()
+                }
+            })
     }
 
     private func applyEnabledState(_ isEnabled: Bool) {
