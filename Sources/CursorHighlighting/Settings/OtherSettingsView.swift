@@ -1,4 +1,5 @@
 import Defaults
+import KeyboardShortcuts
 import LaunchAtLogin
 import SwiftUI
 
@@ -96,5 +97,10 @@ struct GeneralSettingsContentView: View {
         Defaults.reset(.keyStrokeEnabled)
         Defaults.reset(.keyStrokeFontSize)
         Defaults.reset(.keyStrokeTheme)
+
+        // グローバルホットキーをリセット（未設定に戻す）
+        KeyboardShortcuts.reset(.toggleSpotlight)
+        KeyboardShortcuts.reset(.toggleClicks)
+        KeyboardShortcuts.reset(.toggleKeyStrokes)
     }
 }

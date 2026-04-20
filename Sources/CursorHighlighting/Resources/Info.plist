@@ -7,7 +7,7 @@
     <key>CFBundleDisplayName</key>
     <string>Cursor Highlighting</string>
     <key>CFBundleIdentifier</key>
-    <string>com.github.cursor-highlighting</string>
+    <string>com.shuichi.cursor-highlighting</string>
     <key>CFBundleVersion</key>
     <string>1.0.0</string>
     <key>CFBundleShortVersionString</key>

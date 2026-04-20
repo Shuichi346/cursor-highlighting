@@ -65,10 +65,6 @@ final class AppState {
         window.titleVisibility = .hidden
         window.backgroundColor = NSColor.windowBackgroundColor
 
-        let toolbar = NSToolbar(identifier: "SettingsToolbar")
-        toolbar.showsBaselineSeparator = false
-        window.toolbar = toolbar
-
         window.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
 
