@@ -16,6 +16,7 @@ app: build-release
 	mkdir -p $(APP_BUNDLE)/Contents/Resources
 	cp $(BUILD_DIR)/$(APP_NAME) $(APP_BUNDLE)/Contents/MacOS/$(APP_NAME)
 	cp Sources/$(APP_NAME)/Resources/Info.plist $(APP_BUNDLE)/Contents/
+	cp Resources/icon/icon.icns $(APP_BUNDLE)/Contents/Resources/
 	@find -L $(BUILD_DIR) -maxdepth 1 -type d -name '*.bundle' -exec cp -R {} $(APP_BUNDLE)/Contents/Resources/ \;
 	@echo "✅ Built $(APP_BUNDLE)"
 

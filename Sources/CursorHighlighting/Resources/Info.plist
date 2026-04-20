@@ -26,5 +26,7 @@
     <true/>
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
+    <key>CFBundleIconFile</key>
+    <string>icon</string>
 </dict>
 </plist>
