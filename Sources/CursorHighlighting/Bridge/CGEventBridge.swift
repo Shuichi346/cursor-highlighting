@@ -12,8 +12,10 @@ struct BridgedKeyEvent: Sendable {
 // AsyncStream.ContinuationをCコールバックに渡すためのボックス型
 // Continuationはスレッドセーフ（yieldはどのスレッドからでも安全に呼べる）
 // @unchecked Sendableはこのアプリケーション全体で唯一ここだけ使用
-final class ContinuationBox: @unchecked Sendable {
+final class EventTapContext: @unchecked Sendable {
     let continuation: AsyncStream<BridgedKeyEvent>.Continuation
+    var eventTap: CFMachPort?
+
     init(_ continuation: AsyncStream<BridgedKeyEvent>.Continuation) {
         self.continuation = continuation
     }
@@ -25,11 +27,28 @@ final class EventTapBox: @unchecked Sendable {
     let eventTap: CFMachPort
     let runLoopSource: CFRunLoopSource
     let pointerBits: Int
+    private let lock = NSLock()
+    private var isCancelled = false
 
     init(eventTap: CFMachPort, runLoopSource: CFRunLoopSource, pointerBits: Int) {
         self.eventTap = eventTap
         self.runLoopSource = runLoopSource
         self.pointerBits = pointerBits
+    }
+
+    func cancel(_ continuation: AsyncStream<BridgedKeyEvent>.Continuation) {
+        lock.lock()
+        defer { lock.unlock() }
+
+        guard !isCancelled else { return }
+        isCancelled = true
+
+        CGEvent.tapEnable(tap: eventTap, enable: false)
+        CFRunLoopRemoveSource(CFRunLoopGetMain(), runLoopSource, .commonModes)
+
+        let ptr = UnsafeMutableRawPointer(bitPattern: pointerBits)!
+        Unmanaged<EventTapContext>.fromOpaque(ptr).release()
+        continuation.finish()
     }
 }
 
@@ -44,8 +63,13 @@ private func cgEventCallback(
         return Unmanaged.passUnretained(event)
     }
 
-    // タップが無効化された場合は再有効化
+    let context = Unmanaged<EventTapContext>.fromOpaque(userInfo).takeUnretainedValue()
+
+    // タップが一時的に無効化された場合は再有効化
     if type == .tapDisabledByTimeout || type == .tapDisabledByUserInput {
+        if let eventTap = context.eventTap {
+            CGEvent.tapEnable(tap: eventTap, enable: true)
+        }
         return Unmanaged.passUnretained(event)
     }
 
@@ -54,9 +78,7 @@ private func cgEventCallback(
         let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
         let flags = event.flags
         let bridgedEvent = BridgedKeyEvent(keyCode: keyCode, flags: flags, type: type)
-
-        let box = Unmanaged<ContinuationBox>.fromOpaque(userInfo).takeUnretainedValue()
-        box.continuation.yield(bridgedEvent)
+        context.continuation.yield(bridgedEvent)
     }
 
     return Unmanaged.passUnretained(event)
@@ -72,8 +94,8 @@ func createKeyEventStream() -> (stream: AsyncStream<BridgedKeyEvent>, cancel: @S
         bufferingPolicy: .bufferingNewest(64)
     )
 
-    let box = ContinuationBox(continuation)
-    let pointer = Unmanaged.passRetained(box).toOpaque()
+    let context = EventTapContext(continuation)
+    let pointer = Unmanaged.passRetained(context).toOpaque()
 
     // keyDownイベントのみをリッスン
     let eventMask: CGEventMask = (1 << CGEventType.keyDown.rawValue)
@@ -89,10 +111,12 @@ func createKeyEventStream() -> (stream: AsyncStream<BridgedKeyEvent>, cancel: @S
         )
     else {
         // 権限未付与 — Unmanagedを解放してストリームを終了
-        Unmanaged<ContinuationBox>.fromOpaque(pointer).release()
+        Unmanaged<EventTapContext>.fromOpaque(pointer).release()
         continuation.finish()
         return nil
     }
+
+    context.eventTap = eventTap
 
     // メインRunLoopに追加
     let runLoopSource = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, eventTap, 0)!
@@ -108,11 +132,7 @@ func createKeyEventStream() -> (stream: AsyncStream<BridgedKeyEvent>, cancel: @S
 
     // キャンセル時のクリーンアップクロージャ
     let cancel: @Sendable () -> Void = {
-        CGEvent.tapEnable(tap: tapBox.eventTap, enable: false)
-        CFRunLoopRemoveSource(CFRunLoopGetMain(), tapBox.runLoopSource, .commonModes)
-        let ptr = UnsafeMutableRawPointer(bitPattern: tapBox.pointerBits)!
-        Unmanaged<ContinuationBox>.fromOpaque(ptr).release()
-        continuation.finish()
+        tapBox.cancel(continuation)
     }
 
     return (stream, cancel)

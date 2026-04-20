@@ -10,7 +10,7 @@ final class ClickManager {
     private var clickStreamCancel: (@Sendable () -> Void)?
     private var consumeTask: Task<Void, Never>?
     private(set) var isActive = false
-    private var observationTask: Task<Void, Never>?
+    private var observationTasks: [Task<Void, Never>] = []
 
     init() {
         // ホットキー登録
@@ -69,16 +69,28 @@ final class ClickManager {
         isActive = false
     }
 
+    func shutdown() {
+        observationTasks.forEach { $0.cancel() }
+        observationTasks.removeAll()
+        deactivate()
+    }
+
     // Defaults変更の監視
     private func startObserving() {
-        observationTask = Task { [weak self] in
-            for await enabled in Defaults.updates(.clickEnabled) {
-                if enabled {
-                    self?.activate()
-                } else {
-                    self?.deactivate()
-                }
+        applyEnabledState(Defaults[.clickEnabled])
+
+        observationTasks.append(Task { [weak self] in
+            for await enabled in Defaults.updates(.clickEnabled, initial: false) {
+                self?.applyEnabledState(enabled)
             }
+        })
+    }
+
+    private func applyEnabledState(_ isEnabled: Bool) {
+        if isEnabled {
+            activate()
+        } else {
+            deactivate()
         }
     }
 }

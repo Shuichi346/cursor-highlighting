@@ -17,10 +17,13 @@ struct KeyStrokeSettingsView: View {
                 Toggle(L("settings.keystrokes.enabled"), isOn: $keyStrokeEnabled)
             }
             Settings.Section(title: L("settings.keystrokes.fontSize")) {
-                Slider(value: $fontSize, in: 10...96, step: 4) {
+                HStack(spacing: 12) {
+                    Slider(value: $fontSize, in: 10...96, step: 4)
+                        .frame(width: 250)
                     Text("\(Int(fontSize)) pt")
+                        .monospacedDigit()
+                        .frame(width: 64, alignment: .leading)
                 }
-                .frame(width: 250)
             }
         }
     }

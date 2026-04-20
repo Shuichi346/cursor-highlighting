@@ -2,6 +2,8 @@ import CoreGraphics
 
 // キーコードからディスプレイ文字列への変換ユーティリティ
 enum KeySymbol {
+    private static let modifierOnlyKeyCodes: Set<Int64> = [54, 55, 56, 57, 58, 59, 60, 61, 62, 63]
+
     // 修飾キーフラグからmacOS標準の記号文字列を生成
     static func modifierSymbols(from flags: CGEventFlags) -> String {
         var result = ""
@@ -46,8 +48,11 @@ enum KeySymbol {
 
     // 修飾キー＋キーコードから表示用文字列を生成
     static func displayString(keyCode: Int64, modifiers: CGEventFlags) -> String {
-        // 修飾キーのみのイベントは除外（keyCodeが有効な場合のみ組み合わせ表示）
         let mods = modifierSymbols(from: modifiers)
+        if modifierOnlyKeyCodes.contains(keyCode) {
+            return mods
+        }
+
         let key = keyName(from: keyCode)
         return mods + key
     }

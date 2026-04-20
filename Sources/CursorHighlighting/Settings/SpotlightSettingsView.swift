@@ -9,7 +9,13 @@ struct SpotlightSettingsView: View {
     @Default(.spotlightBlur) private var blur
     @Default(.spotlightOpacity) private var opacity
     @Default(.spotlightColor) private var spotlightColor
-    @State private var selectedColor: Color = .white
+
+    private var colorBinding: Binding<Color> {
+        Binding(
+            get: { spotlightColor.color },
+            set: { spotlightColor = CodableColor(nsColor: NSColor($0)) }
+        )
+    }
 
     var body: some View {
         Settings.Container(contentWidth: 450.0) {
@@ -17,33 +23,34 @@ struct SpotlightSettingsView: View {
                 KeyboardShortcuts.Recorder(for: .toggleSpotlight)
             }
             Settings.Section(title: L("settings.spotlight.radius")) {
-                Slider(value: $radius, in: 0...400, step: 10) {
+                HStack(spacing: 12) {
+                    Slider(value: $radius, in: 0...400, step: 10)
+                        .frame(width: 250)
                     Text("\(Int(radius)) px")
+                        .monospacedDigit()
+                        .frame(width: 64, alignment: .leading)
                 }
-                .frame(width: 250)
             }
             Settings.Section(title: L("settings.spotlight.blur")) {
-                Slider(value: $blur, in: 0...100, step: 5) {
+                HStack(spacing: 12) {
+                    Slider(value: $blur, in: 0...100, step: 5)
+                        .frame(width: 250)
                     Text("\(Int(blur)) px")
+                        .monospacedDigit()
+                        .frame(width: 64, alignment: .leading)
                 }
-                .frame(width: 250)
             }
             Settings.Section(title: L("settings.spotlight.opacity")) {
-                Slider(value: $opacity, in: 0...1.0, step: 0.05) {
+                HStack(spacing: 12) {
+                    Slider(value: $opacity, in: 0...1.0, step: 0.05)
+                        .frame(width: 250)
                     Text(String(format: "%.0f%%", opacity * 100))
+                        .monospacedDigit()
+                        .frame(width: 64, alignment: .leading)
                 }
-                .frame(width: 250)
             }
             Settings.Section(title: L("settings.spotlight.color")) {
-                ColorPicker(
-                    L("settings.spotlight.color"), selection: $selectedColor, supportsOpacity: false
-                )
-                .onAppear {
-                    selectedColor = spotlightColor.color
-                }
-                .onChange(of: selectedColor) { _, newValue in
-                    spotlightColor = CodableColor(nsColor: NSColor(newValue))
-                }
+                ColorPicker(L("settings.spotlight.color"), selection: colorBinding, supportsOpacity: true)
             }
         }
     }

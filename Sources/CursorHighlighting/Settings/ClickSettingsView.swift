@@ -8,8 +8,20 @@ struct ClickSettingsView: View {
     @Default(.leftClickColor) private var leftClickColor
     @Default(.rightClickColor) private var rightClickColor
     @Default(.clickRingMaxRadius) private var ringMaxRadius
-    @State private var leftColor: Color = .blue
-    @State private var rightColor: Color = .red
+
+    private var leftColorBinding: Binding<Color> {
+        Binding(
+            get: { leftClickColor.color },
+            set: { leftClickColor = CodableColor(nsColor: NSColor($0)) }
+        )
+    }
+
+    private var rightColorBinding: Binding<Color> {
+        Binding(
+            get: { rightClickColor.color },
+            set: { rightClickColor = CodableColor(nsColor: NSColor($0)) }
+        )
+    }
 
     var body: some View {
         Settings.Container(contentWidth: 450.0) {
@@ -18,31 +30,26 @@ struct ClickSettingsView: View {
             }
             Settings.Section(title: L("settings.clicks.leftColor")) {
                 ColorPicker(
-                    L("settings.clicks.leftColor"), selection: $leftColor, supportsOpacity: false
+                    L("settings.clicks.leftColor"),
+                    selection: leftColorBinding,
+                    supportsOpacity: false
                 )
-                .onAppear {
-                    leftColor = leftClickColor.color
-                }
-                .onChange(of: leftColor) { _, newValue in
-                    leftClickColor = CodableColor(nsColor: NSColor(newValue))
-                }
             }
             Settings.Section(title: L("settings.clicks.rightColor")) {
                 ColorPicker(
-                    L("settings.clicks.rightColor"), selection: $rightColor, supportsOpacity: false
+                    L("settings.clicks.rightColor"),
+                    selection: rightColorBinding,
+                    supportsOpacity: false
                 )
-                .onAppear {
-                    rightColor = rightClickColor.color
-                }
-                .onChange(of: rightColor) { _, newValue in
-                    rightClickColor = CodableColor(nsColor: NSColor(newValue))
-                }
             }
             Settings.Section(title: L("settings.clicks.ringSize")) {
-                Slider(value: $ringMaxRadius, in: 0...80, step: 5) {
+                HStack(spacing: 12) {
+                    Slider(value: $ringMaxRadius, in: 0...80, step: 5)
+                        .frame(width: 250)
                     Text("\(Int(ringMaxRadius)) px")
+                        .monospacedDigit()
+                        .frame(width: 64, alignment: .leading)
                 }
-                .frame(width: 250)
             }
         }
     }

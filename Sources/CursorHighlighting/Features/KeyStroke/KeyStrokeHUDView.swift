@@ -31,6 +31,6 @@ struct KeyStrokeHUDView: View {
             .padding(.bottom, 60)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
-        .animation(.easeInOut(duration: 0.2), value: entries.count)
+        .animation(.easeInOut(duration: 0.2), value: entries.map(\.id))
     }
 }

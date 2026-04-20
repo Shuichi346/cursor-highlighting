@@ -20,9 +20,8 @@ struct OtherSettingsView: View {
                 }
                 .pickerStyle(.segmented)
                 .frame(width: 200)
-                .onChange(of: appLanguage) { _, newValue in
-                    UserDefaults.standard.set([newValue], forKey: "AppleLanguages")
-                    UserDefaults.standard.synchronize()
+                .onChange(of: appLanguage) { _, _ in
+                    Localization.applySavedLanguage()
                     showRestartAlert = true
                 }
                 .alert(L("settings.others.language"), isPresented: $showRestartAlert) {

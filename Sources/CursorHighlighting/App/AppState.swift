@@ -12,6 +12,7 @@ final class AppState {
     let keyStrokeManager: KeyStrokeManager
     private var settingsWindowController: SettingsWindowController?
     private var permissionObservationTask: Task<Void, Never>?
+    private var terminationObserver: NSObjectProtocol?
 
     init() {
         // 各マネージャーを初期化
@@ -30,7 +31,18 @@ final class AppState {
             }
             // 権限が付与された時点でキーストロークが有効設定なら有効化
             if let self = self, Defaults[.keyStrokeEnabled], !self.keyStrokeManager.isActive {
+                self.permissionManager.stopPolling()
                 self.keyStrokeManager.activate()
+            }
+        }
+
+        terminationObserver = NotificationCenter.default.addObserver(
+            forName: NSApplication.willTerminateNotification,
+            object: NSApp,
+            queue: nil
+        ) { [weak self] _ in
+            Task { @MainActor in
+                self?.shutdown()
             }
         }
     }
@@ -85,5 +97,14 @@ final class AppState {
         }
         settingsWindowController?.show()
         NSApp.activate(ignoringOtherApps: true)
+    }
+
+    func shutdown() {
+        permissionObservationTask?.cancel()
+        permissionObservationTask = nil
+        permissionManager.stopPolling()
+        spotlightManager.shutdown()
+        clickManager.shutdown()
+        keyStrokeManager.shutdown()
     }
 }

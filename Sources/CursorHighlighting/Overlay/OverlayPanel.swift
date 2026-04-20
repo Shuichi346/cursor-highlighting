@@ -3,10 +3,12 @@ import AppKit
 // 全画面透過オーバーレイ用の共有NSPanelサブクラス
 @MainActor
 final class OverlayPanel: NSPanel {
-    init(overlayLevel: NSWindow.Level = .screenSaver) {
-        let screenFrame = NSScreen.main?.frame ?? NSRect(x: 0, y: 0, width: 1920, height: 1080)
+    private(set) var currentScreen: NSScreen
+
+    init(screen: NSScreen, overlayLevel: NSWindow.Level = .screenSaver) {
+        self.currentScreen = screen
         super.init(
-            contentRect: screenFrame,
+            contentRect: screen.frame,
             styleMask: [.borderless, .nonactivatingPanel],
             backing: .buffered,
             defer: false
@@ -24,10 +26,15 @@ final class OverlayPanel: NSPanel {
     override var canBecomeKey: Bool { false }
     override var canBecomeMain: Bool { false }
 
+    // 表示対象のスクリーンへ移動
+    func move(to screen: NSScreen) {
+        currentScreen = screen
+        setFrame(screen.frame, display: true)
+    }
+
     // 全画面で表示
     func showFullScreen() {
-        let screenFrame = NSScreen.main?.frame ?? frame
-        setFrame(screenFrame, display: true)
+        setFrame(currentScreen.frame, display: true)
         orderFrontRegardless()
     }
 

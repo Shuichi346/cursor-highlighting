@@ -43,8 +43,14 @@ struct CodableColor: Codable, Sendable, Equatable, Defaults.Serializable {
         var hexSanitized = hex.trimmingCharacters(in: .whitespacesAndNewlines)
         hexSanitized = hexSanitized.replacingOccurrences(of: "#", with: "")
 
+        guard hexSanitized.count == 6 else {
+            return CodableColor(red: 0, green: 0, blue: 0, alpha: 1.0)
+        }
+
         var rgb: UInt64 = 0
-        Scanner(string: hexSanitized).scanHexInt64(&rgb)
+        guard Scanner(string: hexSanitized).scanHexInt64(&rgb) else {
+            return CodableColor(red: 0, green: 0, blue: 0, alpha: 1.0)
+        }
 
         let r = Double((rgb & 0xFF0000) >> 16) / 255.0
         let g = Double((rgb & 0x00FF00) >> 8) / 255.0

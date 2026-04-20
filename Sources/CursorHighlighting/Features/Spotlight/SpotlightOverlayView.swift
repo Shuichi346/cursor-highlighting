@@ -59,10 +59,15 @@ final class SpotlightOverlayView: NSView {
             }
         }
 
-        // スポットライトカラーが白でない場合、円内に微妙なカラーティントを追加
-        if spotlightColor != .white {
-            let tintColor = spotlightColor.withAlphaComponent(0.15)
-            context.setFillColor(tintColor.cgColor)
+        // 白以外の色が選ばれている場合だけ円内に色を乗せる
+        let convertedColor = spotlightColor.usingColorSpace(.sRGB) ?? spotlightColor
+        let isWhiteTint =
+            abs(convertedColor.redComponent - 1) < 0.001
+            && abs(convertedColor.greenComponent - 1) < 0.001
+            && abs(convertedColor.blueComponent - 1) < 0.001
+
+        if !isWhiteTint && convertedColor.alphaComponent > 0 {
+            context.setFillColor(convertedColor.cgColor)
             context.fillEllipse(in: circleRect)
         }
     }

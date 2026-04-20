@@ -10,7 +10,7 @@ final class KeyStrokeManager {
     private var eventStreamCancel: (@Sendable () -> Void)?
     private var consumeTask: Task<Void, Never>?
     private(set) var isActive = false
-    private var observationTask: Task<Void, Never>?
+    private var observationTasks: [Task<Void, Never>] = []
 
     init() {
         // ホットキー登録
@@ -44,6 +44,7 @@ final class KeyStrokeManager {
                     keyCode: event.keyCode,
                     modifiers: event.flags
                 )
+                guard !displayString.isEmpty else { continue }
                 self.overlayWindow.addEntry(displayString)
             }
         }
@@ -60,16 +61,34 @@ final class KeyStrokeManager {
         isActive = false
     }
 
+    func shutdown() {
+        observationTasks.forEach { $0.cancel() }
+        observationTasks.removeAll()
+        deactivate()
+    }
+
     // Defaults変更の監視
     private func startObserving() {
-        observationTask = Task { [weak self] in
-            for await enabled in Defaults.updates(.keyStrokeEnabled) {
-                if enabled {
-                    self?.activate()
-                } else {
-                    self?.deactivate()
-                }
+        applyEnabledState(Defaults[.keyStrokeEnabled])
+
+        observationTasks.append(Task { [weak self] in
+            for await enabled in Defaults.updates(.keyStrokeEnabled, initial: false) {
+                self?.applyEnabledState(enabled)
             }
+        })
+
+        observationTasks.append(Task { [weak self] in
+            for await _ in Defaults.updates(.keyStrokeFontSize, initial: false) {
+                self?.overlayWindow.updateFontSize()
+            }
+        })
+    }
+
+    private func applyEnabledState(_ isEnabled: Bool) {
+        if isEnabled {
+            activate()
+        } else {
+            deactivate()
         }
     }
 }
