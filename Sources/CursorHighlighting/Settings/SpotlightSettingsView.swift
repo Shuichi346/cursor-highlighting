@@ -42,7 +42,7 @@ struct SpotlightSettingsView: View {
             }
             Settings.Section(title: L("settings.spotlight.opacity")) {
                 HStack(spacing: 12) {
-                    Slider(value: $opacity, in: 0...1.0, step: 0.05)
+                    Slider(value: $opacity, in: 0...0.5, step: 0.05)
                         .frame(width: 250)
                     Text(String(format: "%.0f%%", opacity * 100))
                         .monospacedDigit()
