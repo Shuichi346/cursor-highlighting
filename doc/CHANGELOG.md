@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.0.4] - 2026-04-20
+
+### Changed
+- **Spotlight:** Default enabled state changed to `true` (was `false`)
+- **Spotlight:** Default radius changed to 30 px (was 150 px)
+- **Spotlight:** Default blur changed to 0 px (was 30 px)
+- **Spotlight:** Default background opacity changed to 0% (was 50%)
+- **Spotlight:** Default color changed to semi-transparent red (was white)
+- **Spotlight:** Removed default hotkey `⇧1` (now unassigned)
+- **Spotlight:** Drawing logic now skips dimming overlay when opacity is 0 and always renders spotlight color circle when alpha > 0
+- **Keystrokes:** Default enabled state changed to `false` (was `true`)
+- **Keystrokes:** Font size slider range changed to 10–80 pt with step 2 (was 10–96 pt with step 4)
+
+### Fixed
+- **Core / Lifecycle:** Fixed a bug where the accessibility permission polling would never stop if Key Strokes was disabled at the time permission was granted
+
 ## [1.0.3] - 2026-04-20
 
 ### Removed

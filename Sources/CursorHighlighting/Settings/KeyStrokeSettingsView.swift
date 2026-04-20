@@ -36,7 +36,7 @@ struct KeyStrokeSettingsContentView: View {
             SectionHeader(title: L("settings.appearance"))
             SettingsCard {
                 SettingsRow(label: L("settings.keystrokes.fontSize")) {
-                    ValueSlider(value: $fontSize, in: 10...96, step: 4, unit: "pt")
+                    ValueSlider(value: $fontSize, in: 10...80, step: 2, unit: "pt")
                 }
                 Divider().opacity(0.5)
                 SettingsRow(label: L("settings.keystrokes.theme")) {

@@ -8,10 +8,10 @@ final class SpotlightOverlayView: NSView {
     var cursorPosition: NSPoint = .zero {
         didSet { needsDisplay = true }
     }
-    var spotlightRadius: CGFloat = 150
-    var blurRadius: CGFloat = 30
-    var overlayOpacity: CGFloat = 0.5
-    var spotlightColor: NSColor = .white
+    var spotlightRadius: CGFloat = 30
+    var blurRadius: CGFloat = 0
+    var overlayOpacity: CGFloat = 0.0
+    var spotlightColor: NSColor = NSColor(srgbRed: 1.0, green: 0.0, blue: 0.0, alpha: 0.5)
 
     override var isFlipped: Bool { true }
 
@@ -20,26 +20,27 @@ final class SpotlightOverlayView: NSView {
     override func draw(_ dirtyRect: NSRect) {
         guard let context = NSGraphicsContext.current?.cgContext else { return }
 
-        // Even-Oddフィルルールでスポットライト切り抜きを描画
-        let path = CGMutablePath()
-        // 外枠（ビュー全体）
-        path.addRect(bounds)
-        // 内側の楕円（カーソル位置を中心とした円）
         let circleRect = CGRect(
             x: cursorPosition.x - spotlightRadius,
             y: cursorPosition.y - spotlightRadius,
             width: spotlightRadius * 2,
             height: spotlightRadius * 2
         )
-        path.addEllipse(in: circleRect)
 
-        // 暗幕を描画（円の部分は切り抜かれる）
-        context.setFillColor(NSColor.black.withAlphaComponent(overlayOpacity).cgColor)
-        context.addPath(path)
-        context.fillPath(using: .evenOdd)
+        // 背景の暗幕を描画（opacity > 0 の場合のみ）
+        if overlayOpacity > 0 {
+            // Even-Oddフィルルールでスポットライト切り抜きを描画
+            let path = CGMutablePath()
+            path.addRect(bounds)
+            path.addEllipse(in: circleRect)
+
+            context.setFillColor(NSColor.black.withAlphaComponent(overlayOpacity).cgColor)
+            context.addPath(path)
+            context.fillPath(using: .evenOdd)
+        }
 
         // ぼかしエフェクト: 円の境界にグラデーションリングを描画
-        if blurRadius > 0 {
+        if blurRadius > 0 && overlayOpacity > 0 {
             let gradientSteps = 20
             for i in 0..<gradientSteps {
                 let progress = CGFloat(i) / CGFloat(gradientSteps)
@@ -59,14 +60,9 @@ final class SpotlightOverlayView: NSView {
             }
         }
 
-        // 白以外の色が選ばれている場合だけ円内に色を乗せる
+        // スポットライト色を円内に描画（alphaが0より大きい場合）
         let convertedColor = spotlightColor.usingColorSpace(.sRGB) ?? spotlightColor
-        let isWhiteTint =
-            abs(convertedColor.redComponent - 1) < 0.001
-            && abs(convertedColor.greenComponent - 1) < 0.001
-            && abs(convertedColor.blueComponent - 1) < 0.001
-
-        if !isWhiteTint && convertedColor.alphaComponent > 0 {
+        if convertedColor.alphaComponent > 0 {
             context.setFillColor(convertedColor.cgColor)
             context.fillEllipse(in: circleRect)
         }

@@ -1,71 +1,256 @@
+<table>
+  <thead>
+    <tr>
+      <th style="text-align:center"><a href="README_ja.md">日本語</a></th>
+      <th style="text-align:center"><a href="README.md">English</a></th>
+    </tr>
+  </thead>
+</table>
+
+<div align="center">
+
 # Cursor Highlighting
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+**A macOS menu bar utility that visually highlights mouse operations and keyboard input.**
 
-A macOS menu-bar-only utility that visually highlights mouse operations and keyboard input for presentations, screen recordings, and live streaming.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-macOS%2026.0+-blue.svg)]()
+[![Swift](https://img.shields.io/badge/Swift-6.3-orange.svg)]()
+
+<img src="https://developer.apple.com/assets/elements/icons/swiftui/swiftui-96x96_2x.png" width="80" alt="SwiftUI">
+
+</div>
+
+---
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Features](#features)
+- [Screenshots](#screenshots)
+- [Requirements](#requirements)
+- [Build \& Run](#build--run)
+- [Permissions](#permissions)
+- [Configuration](#configuration)
+- [Keyboard Shortcuts](#keyboard-shortcuts)
+- [Architecture](#architecture)
+- [Tech Stack](#tech-stack)
+- [Credits](#credits)
+- [License](#license)
+
+---
+
+## Overview
+
+Cursor Highlighting is a lightweight, menu-bar-only macOS utility designed for presentations, screen recordings, and live streaming. It provides three core visual feedback features — a mouse spotlight, click ring animations, and an on-screen keystroke HUD — all controllable via customizable global hotkeys.
+
+The app runs entirely from the menu bar with no Dock icon, staying out of your way while providing clear visual cues for your audience.
+
+---
 
 ## Features
 
-- **Mouse Spotlight** — Dims the screen except for a circle around the cursor
-- **Mouse Clicks** — Animated color-coded rings on left/right click
-- **Key Strokes** — On-screen HUD display of pressed keys with macOS modifier symbols (⌘⌥⇧⌃)
+- **Mouse Spotlight** — Dims the entire screen except for a configurable circle that follows your cursor, drawing attention to where you're pointing.
 
-All features are togglable via customizable global hotkeys.
+- **Click Effects** — Displays animated, color-coded expanding rings on left and right mouse clicks, making every click visible to viewers.
+
+- **Keystroke Display** — Shows pressed keys in a bottom-center HUD overlay with native macOS modifier symbols (`⌘` `⌥` `⇧` `⌃` `⇪` `fn`), perfect for demonstrating keyboard shortcuts.
+
+- **Global Hotkeys** — All features are togglable via fully customizable global keyboard shortcuts that work even when other apps are in the foreground.
+
+- **Real-time Settings** — Every setting (colors, sizes, opacity, blur) applies instantly while features are active — no restart required.
+
+- **Reset to Defaults** — One-click reset in Settings restores all configurations to their original values.
+
+- **Launch at Login** — Optionally start the app automatically when you log in.
+
+---
+
+## Screenshots
+
+> [!NOTE]
+> [Add screenshots of the app in action here — spotlight effect, click rings, keystroke HUD, and the settings window.]
+
+---
 
 ## Requirements
 
-- macOS 26.0 (Tahoe) or later
-- Xcode 26.4+ (provides Swift 6.3 toolchain and macOS 26 SDK)
+| Requirement | Version |
+|---|---|
+| **macOS** | 26.0 (Tahoe) or later |
+| **Xcode** | 26.4+ (provides Swift 6.3 toolchain and macOS 26 SDK) |
+
+> [!IMPORTANT]
+> This app is **not sandboxed**. It requires Accessibility permission to monitor mouse and keyboard events via `CGEventTap`.
+
+---
 
 ## Build & Run
 
+Clone the repository and use the provided Makefile:
+
 ```bash
-git clone https://github.com/your-username/cursor-highlighting.git
+git clone https://github.com/Shuichi346/cursor-highlighting.git
 cd cursor-highlighting
-make run        # Build and run
-make app        # Create .app bundle at build/CursorHighlighting.app
-make clean      # Clean build artifacts
 ```
+
+### Available Make Targets
+
+| Command | Description |
+|---|---|
+| `make run` | Build and run the app directly |
+| `make app` | Create a `.app` bundle at `build/CursorHighlighting.app` |
+| `make build-release` | Build a release binary without bundling |
+| `make clean` | Remove all build artifacts |
+
+### Quick Start
+
+```bash
+# Run directly from source
+make run
+
+# Or build the .app bundle and open it
+make app
+open build/CursorHighlighting.app
+```
+
+---
 
 ## Permissions
 
-This app requires **Accessibility** permission to monitor mouse and keyboard events.
+This app requires **Accessibility** permission to monitor global mouse and keyboard events.
 
-On first launch, you will be prompted to grant access. Navigate to:
-**System Settings > Privacy & Security > Accessibility** and enable Cursor Highlighting.
+On first launch, you will be prompted to grant access. If the prompt doesn't appear or you need to grant it manually:
+
+1. Open **System Settings**
+2. Navigate to **Privacy & Security → Accessibility**
+3. Enable **Cursor Highlighting**
+
+The app polls for permission status and will activate features automatically once access is granted.
+
+---
 
 ## Configuration
 
-Open Settings from the menu bar dropdown. Four tabs:
+Open the Settings window from the menu bar dropdown. The settings are organized into four tabs:
 
-1. **Mouse Spotlight** — Radius, blur, opacity, color, hotkey (default: Shift+1)
-2. **Mouse Clicks** — Left/right click colors, ring size, hotkey
-3. **Key Strokes** — Enable/disable, font size, hotkey
-4. **Others** — Launch at Login, language (English/Japanese)
+### Spotlight
+
+| Setting | Description | Default |
+|---|---|---|
+| Enable Spotlight | Toggle the spotlight effect | Off |
+| Activation Hotkey | Global shortcut to toggle | `⇧1` |
+| Spotlight Radius | Size of the bright area | 150 px |
+| Edge Blur | Softness of the circle edge | 30 px |
+| Background Opacity | Darkness of surrounding screen | 50% |
+| Spotlight Color | Tint color of the spotlight circle | White |
+
+### Click Effects
+
+| Setting | Description | Default |
+|---|---|---|
+| Enable Click Rings | Toggle click visualization | On |
+| Hotkey | Global shortcut to toggle | None |
+| Left Click Color | Color of left-click rings | Blue (`#007AFF`) |
+| Right Click Color | Color of right-click rings | Red (`#FF3B30`) |
+| Ring Size | Maximum radius of expanding ring | 30 px |
+
+### Keystrokes
+
+| Setting | Description | Default |
+|---|---|---|
+| Show Keystrokes | Toggle keystroke HUD | On |
+| Hotkey | Global shortcut to toggle | None |
+| Font Size | Size of displayed key text | 48 pt |
+| Theme | Light or Dark HUD background | Dark |
+
+### General
+
+| Setting | Description |
+|---|---|
+| Launch at Login | Auto-start on login |
+| Reset to Defaults | Restore all settings to original values |
+
+---
 
 ## Keyboard Shortcuts
 
-| Feature | Default | Customizable |
-|---------|---------|--------------|
-| Mouse Spotlight | ⇧1 | ✅ |
-| Mouse Clicks | (none) | ✅ |
-| Key Strokes | (none) | ✅ |
+| Feature | Default Shortcut | Customizable |
+|---|---|---|
+| Mouse Spotlight | `⇧1` | ✅ |
+| Click Effects | *(none)* | ✅ |
+| Keystroke Display | *(none)* | ✅ |
 
-## Localization
+All shortcuts are global and work regardless of which application is in the foreground. Customize them in the respective Settings tabs using the built-in hotkey recorder.
 
-English (default) and Japanese. Switchable in Settings > Others.
+---
 
 ## Architecture
 
-Built with Swift 6.3 language mode (strict concurrency). Uses `AsyncStream` to safely bridge C-level `CGEventTapCallBack` into Swift's structured concurrency model — all data races are caught at compile time.
+Built with **Swift 6.3 language mode** (strict concurrency). The app achieves zero data races by construction through a carefully designed architecture:
+
+```
+Sources/CursorHighlighting/
+├── App/                        # Entry point, app state, permission management
+│   ├── CursorHighlightingApp.swift
+│   ├── AppState.swift
+│   └── PermissionManager.swift
+├── Bridge/                     # C callback → AsyncStream bridges
+│   ├── CGEventBridge.swift     # CGEventTap → AsyncStream<BridgedKeyEvent>
+│   └── NSEventBridge.swift     # NSEvent monitors → AsyncStream<BridgedMouseEvent>
+├── Features/
+│   ├── Spotlight/              # Fullscreen dim overlay with cursor-following circle
+│   ├── ClickVisualizer/        # Expanding ring animations on mouse clicks
+│   └── KeyStroke/              # Bottom-center HUD for pressed keys
+├── Settings/                   # SwiftUI settings window with sidebar navigation
+├── Overlay/                    # Shared NSPanel subclass for transparent overlays
+├── Utilities/                  # Color serialization, key symbol mapping, localization
+└── Resources/                  # Info.plist, Localizable.strings
+```
+
+### Concurrency Model
+
+The central technical challenge is safely bridging `CGEventTapCallBack` (a C-convention function pointer called on an arbitrary thread) into Swift's structured concurrency. The solution uses `AsyncStream.Continuation` — which is thread-safe for `yield` calls — to pass events from the C callback into a `for await` loop running on `@MainActor`. The compiler statically verifies that all UI updates happen on the main actor, eliminating an entire class of threading bugs.
+
+- **No `DispatchQueue.main.async`** anywhere in the codebase — all main-thread dispatch uses `@MainActor` isolation
+- **Only one `@unchecked Sendable`** in the entire project (the minimal C-bridge wrapper in `CGEventBridge.swift`)
+- All features use `AsyncStream` for event processing and `Defaults.updates()` for reactive settings observation
+
+---
+
+## Tech Stack
+
+| Category | Technology |
+|---|---|
+| **Language** | Swift 6.3 (Swift 6 language mode) |
+| **UI Framework** | SwiftUI + AppKit interop |
+| **Graphics** | Core Graphics, Core Animation |
+| **Concurrency** | Swift Structured Concurrency, AsyncStream |
+| **Build System** | Swift Package Manager + Makefile |
+| **Platform** | macOS 26.0 (Tahoe) |
+
+### Dependencies
+
+| Package | Purpose |
+|---|---|
+| [KeyboardShortcuts](https://github.com/sindresorhus/KeyboardShortcuts) | Global hotkey recording and listening |
+| [LaunchAtLogin-Modern](https://github.com/sindresorhus/LaunchAtLogin-Modern) | Launch at Login integration |
+| [Defaults](https://github.com/sindresorhus/Defaults) | Type-safe UserDefaults with reactive observation |
+
+---
 
 ## Credits
 
-- [sindresorhus/KeyboardShortcuts](https://github.com/sindresorhus/KeyboardShortcuts)
-- [sindresorhus/Settings](https://github.com/sindresorhus/Settings)
-- [sindresorhus/LaunchAtLogin-Modern](https://github.com/sindresorhus/LaunchAtLogin-Modern)
-- [sindresorhus/Defaults](https://github.com/sindresorhus/Defaults)
+This project relies on the excellent open-source libraries by [Sindre Sorhus](https://github.com/sindresorhus):
+
+- [KeyboardShortcuts](https://github.com/sindresorhus/KeyboardShortcuts)
+- [LaunchAtLogin-Modern](https://github.com/sindresorhus/LaunchAtLogin-Modern)
+- [Defaults](https://github.com/sindresorhus/Defaults)
+
+---
 
 ## License
 
-MIT
+This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
+
+External models and libraries used by this tool have their own respective licenses.

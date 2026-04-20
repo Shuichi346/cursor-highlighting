@@ -25,8 +25,11 @@ final class AppState {
             while let self = self, !self.permissionManager.isAccessibilityGranted {
                 try? await Task.sleep(for: .seconds(1))
             }
-            if let self = self, Defaults[.keyStrokeEnabled], !self.keyStrokeManager.isActive {
-                self.permissionManager.stopPolling()
+            guard let self = self else { return }
+            // 権限が付与されたらポーリングを停止
+            self.permissionManager.stopPolling()
+            // キーストロークが有効かつ未起動なら起動する
+            if Defaults[.keyStrokeEnabled], !self.keyStrokeManager.isActive {
                 self.keyStrokeManager.activate()
             }
         }

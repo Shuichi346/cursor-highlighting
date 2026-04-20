@@ -67,5 +67,5 @@ struct CodableColor: Codable, Sendable, Equatable, Defaults.Serializable {
     // デフォルトカラー定義
     static let blue = CodableColor.fromHex("#007AFF")
     static let red = CodableColor.fromHex("#FF3B30")
-    static let spotlightDefault = CodableColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 0.5)
+    static let spotlightDefault = CodableColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 0.5)
 }

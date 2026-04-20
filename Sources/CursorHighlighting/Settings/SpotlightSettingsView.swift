@@ -48,7 +48,7 @@ struct SpotlightSettingsContentView: View {
                     label: L("settings.spotlight.radius"),
                     subtitle: L("settings.spotlight.radiusDescription")
                 ) {
-                    ValueSlider(value: $radius, in: 0...400, step: 10, unit: "px")
+                    ValueSlider(value: $radius, in: 0...100, step: 10, unit: "px")
                 }
                 Divider().opacity(0.5)
                 SettingsRow(
