@@ -12,6 +12,7 @@
 - **Spotlight:** Drawing logic now skips dimming overlay when opacity is 0 and always renders spotlight color circle when alpha > 0
 - **Keystrokes:** Default enabled state changed to `false` (was `true`)
 - **Keystrokes:** Font size slider range changed to 10–80 pt with step 2 (was 10–96 pt with step 4)
+- **Added reset functionality:** Added a reset function to default values
 
 ### Fixed
 - **Core / Lifecycle:** Fixed a bug where the accessibility permission polling would never stop if Key Strokes was disabled at the time permission was granted
