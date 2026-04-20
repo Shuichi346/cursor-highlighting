@@ -19,7 +19,6 @@ struct CursorHighlightingApp: App {
     var body: some Scene {
         let _ = appLanguage
 
-        // メニューバーアイコンとドロップダウンメニュー
         MenuBarExtra("Cursor Highlighting", systemImage: "cursorarrow.rays") {
             Toggle(L("menu.spotlight"), isOn: $spotlightEnabled)
             Toggle(L("menu.clicks"), isOn: $clickEnabled)

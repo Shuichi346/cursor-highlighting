@@ -38,6 +38,11 @@ struct CodableColor: Codable, Sendable, Equatable, Defaults.Serializable {
         Color(nsColor: nsColor)
     }
 
+    // Hex文字列を返す（UI表示用）
+    var hexString: String {
+        String(format: "#%02X%02X%02X", Int(red * 255), Int(green * 255), Int(blue * 255))
+    }
+
     // Hex文字列からパース（"#RRGGBB" 形式）
     static func fromHex(_ hex: String) -> CodableColor {
         var hexSanitized = hex.trimmingCharacters(in: .whitespacesAndNewlines)

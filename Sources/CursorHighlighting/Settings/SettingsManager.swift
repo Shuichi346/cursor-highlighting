@@ -19,6 +19,7 @@ extension Defaults.Keys {
     // キーストローク設定
     static let keyStrokeEnabled = Key<Bool>("keyStrokeEnabled", default: true)
     static let keyStrokeFontSize = Key<Double>("keyStrokeFontSize", default: 48.0)
+    static let keyStrokeTheme = Key<String>("keyStrokeTheme", default: "dark")
 
     // その他設定
     static let appLanguage = Key<String>("appLanguage", default: "en")
