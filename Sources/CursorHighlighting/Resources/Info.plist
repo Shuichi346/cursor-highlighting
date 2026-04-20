@@ -22,8 +22,6 @@
     <true/>
     <key>NSHighResolutionCapable</key>
     <true/>
-    <key>CFBundleAllowMixedLocalizations</key>
-    <true/>
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
     <key>CFBundleIconFile</key>

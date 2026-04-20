@@ -6,7 +6,6 @@ enum SettingsTab: String, CaseIterable, Identifiable {
     case spotlight
     case clicks
     case keystrokes
-    case appearance
     case general
 
     var id: String { rawValue }
@@ -16,7 +15,6 @@ enum SettingsTab: String, CaseIterable, Identifiable {
         case .spotlight: L("settings.spotlight.title")
         case .clicks: L("settings.clicks.title")
         case .keystrokes: L("settings.keystrokes.title")
-        case .appearance: L("settings.appearance.title")
         case .general: L("settings.others.title")
         }
     }
@@ -26,7 +24,6 @@ enum SettingsTab: String, CaseIterable, Identifiable {
         case .spotlight: "light.max"
         case .clicks: "cursorarrow.click.2"
         case .keystrokes: "keyboard"
-        case .appearance: "paintbrush"
         case .general: "gearshape"
         }
     }
@@ -36,7 +33,6 @@ enum SettingsTab: String, CaseIterable, Identifiable {
         case .spotlight: Color(red: 0.40, green: 0.56, blue: 0.90)
         case .clicks: Color(red: 0.55, green: 0.70, blue: 0.95)
         case .keystrokes: Color(red: 0.60, green: 0.50, blue: 0.85)
-        case .appearance: Color(red: 0.90, green: 0.65, blue: 0.45)
         case .general: Color(red: 0.55, green: 0.60, blue: 0.70)
         }
     }
@@ -111,8 +107,6 @@ struct SettingsWindowView: View {
                     ClickSettingsContentView()
                 case .keystrokes:
                     KeyStrokeSettingsContentView()
-                case .appearance:
-                    AppearanceSettingsContentView()
                 case .general:
                     GeneralSettingsContentView()
                 }

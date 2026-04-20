@@ -4,8 +4,7 @@ import SwiftUI
 
 // 一般設定コンテンツ
 struct GeneralSettingsContentView: View {
-    @Default(.appLanguage) private var appLanguage
-    @State private var showRestartAlert = false
+    @State private var showResetAlert = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
@@ -33,23 +32,24 @@ struct GeneralSettingsContentView: View {
                 }
             }
 
-            SectionHeader(title: L("settings.others.language"))
+            SectionHeader(title: L("settings.others.reset"))
             SettingsCard {
-                SettingsRow(
-                    label: L("settings.others.language"),
-                    subtitle: L("settings.others.languageDescription")
-                ) {
-                    Picker("", selection: $appLanguage) {
-                        Text(L("settings.others.language.en")).tag("en")
-                        Text(L("settings.others.language.ja")).tag("ja")
+                HStack {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(L("settings.others.resetTitle"))
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundStyle(.primary)
+                        Text(L("settings.others.resetDescription"))
+                            .font(.system(size: 11))
+                            .foregroundStyle(.tertiary)
                     }
-                    .pickerStyle(.segmented)
-                    .frame(width: 160)
-                    .labelsHidden()
-                    .onChange(of: appLanguage) { _, _ in
-                        Localization.applySavedLanguage()
-                        showRestartAlert = true
+                    Spacer()
+                    Button(L("settings.others.resetButton")) {
+                        showResetAlert = true
                     }
+                    .buttonStyle(.borderedProminent)
+                    .tint(.red.opacity(0.85))
+                    .controlSize(.regular)
                 }
             }
 
@@ -67,10 +67,34 @@ struct GeneralSettingsContentView: View {
                 }
             }
         }
-        .alert(L("settings.others.language"), isPresented: $showRestartAlert) {
-            Button("OK") { showRestartAlert = false }
+        .alert(L("settings.others.resetConfirmTitle"), isPresented: $showResetAlert) {
+            Button(L("settings.others.resetButton"), role: .destructive) {
+                resetAllSettings()
+            }
+            Button(L("settings.others.resetCancel"), role: .cancel) {}
         } message: {
-            Text(L("settings.others.restartRequired"))
+            Text(L("settings.others.resetConfirmMessage"))
         }
+    }
+
+    // すべての設定をデフォルト値にリセット
+    private func resetAllSettings() {
+        // スポットライト設定
+        Defaults.reset(.spotlightEnabled)
+        Defaults.reset(.spotlightRadius)
+        Defaults.reset(.spotlightBlur)
+        Defaults.reset(.spotlightOpacity)
+        Defaults.reset(.spotlightColor)
+
+        // クリック可視化設定
+        Defaults.reset(.clickEnabled)
+        Defaults.reset(.leftClickColor)
+        Defaults.reset(.rightClickColor)
+        Defaults.reset(.clickRingMaxRadius)
+
+        // キーストローク設定
+        Defaults.reset(.keyStrokeEnabled)
+        Defaults.reset(.keyStrokeFontSize)
+        Defaults.reset(.keyStrokeTheme)
     }
 }

@@ -40,25 +40,18 @@
 "settings.keystrokes.theme.light" = "Light";
 "settings.keystrokes.theme.dark" = "Dark";
 
-"settings.appearance.title" = "Appearance";
-"settings.appearance.subtitle" = "Customize colors and visual presets.";
-"settings.appearance.colors" = "Color Palette";
-"settings.appearance.presets" = "Color Presets";
-"settings.appearance.preset.default" = "Default";
-"settings.appearance.preset.ocean" = "Ocean";
-"settings.appearance.preset.sunset" = "Sunset";
-"settings.appearance.preset.forest" = "Forest";
-
 "settings.others.title" = "General";
 "settings.others.subtitle" = "App behavior and preferences.";
 "settings.others.startup" = "Startup";
 "settings.others.launchAtLogin" = "Launch at Login";
 "settings.others.launchAtLoginDescription" = "Automatically start when you log in.";
-"settings.others.language" = "Language";
-"settings.others.languageDescription" = "Choose your preferred language.";
-"settings.others.language.en" = "English";
-"settings.others.language.ja" = "Japanese";
-"settings.others.restartRequired" = "Please restart the app for the language change to take effect.";
+"settings.others.reset" = "Reset";
+"settings.others.resetTitle" = "Reset to Defaults";
+"settings.others.resetDescription" = "Restore all settings to their original default values.";
+"settings.others.resetButton" = "Reset All Settings";
+"settings.others.resetCancel" = "Cancel";
+"settings.others.resetConfirmTitle" = "Reset All Settings?";
+"settings.others.resetConfirmMessage" = "This will restore all spotlight, click, and keystroke settings to their default values. This action cannot be undone.";
 "settings.others.about" = "About";
 
 "permission.title" = "Accessibility Permission Required";

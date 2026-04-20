@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3] - 2026-04-20
+
+### Removed
+- **Appearance tab:** Removed the entire Appearance settings tab and all related code (AppearanceSettingsView.swift, color presets, preset buttons). Color configuration for each feature is already available within its own settings page, making the dedicated Appearance tab redundant.
+- **Japanese localization:** Removed Japanese language support and the language switcher in Settings > General. The UI is now English-only. Removed ja.lproj/Localizable.strings, the Localization enum, applySavedLanguage(), the appLanguage Defaults key, and CFBundleAllowMixedLocalizations from Info.plist.
+
+
 ##[1.0.2] - 2026-04-20
 
 ### Fixed
