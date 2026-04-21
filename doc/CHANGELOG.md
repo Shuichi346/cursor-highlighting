@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.0.5] - 2026-04-21
+
+### Fixed
+- **Core / Resources:** Fixed an issue where the built `.app` bundle requested access to the source code directory (e.g. Documents folder) on launch and when opening Settings. This was caused by SPM's auto-generated `resource_bundle_accessor.swift` containing a hardcoded fallback path to the build directory. Resolved by eliminating `Bundle.module` dependency from the project and correcting the `.bundle` copy destination in the Makefile.
+
+### Changed
+- **Localization:** Replaced `Localizable.strings` / `Bundle.module` based localization with an in-code Swift dictionary in `L10n.swift`. This removes the SPM resource bundle dependency from the project target entirely.
+- **Package.swift:** Removed `defaultLocalization`, `resources`, and `exclude` declarations since the project no longer uses SPM resource bundles.
+- **Makefile:** Changed dependency library `.bundle` copy destination from `Contents/Resources/` to the `.app` root directory to match the path `Bundle.main.bundleURL` resolves to on macOS.
+
+### Removed
+- **Resources:** Removed `Sources/CursorHighlighting/Resources/en.lproj/Localizable.strings` and the `en.lproj` directory (no longer needed).
+
 ## [1.0.4] - 2026-04-20
 
 ### Changed
