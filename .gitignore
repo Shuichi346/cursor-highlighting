@@ -4,6 +4,7 @@ Thumbs.db
 ._*
 
 # Swift / SPM
+.vscode/
 .build/
 .swiftpm/
 Package.resolved
