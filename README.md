@@ -68,8 +68,10 @@ The app runs entirely from the menu bar with no Dock icon, staying out of your w
 
 ## Screenshots
 
-> [!NOTE]
-> [Add screenshots of the app in action here — spotlight effect, click rings, keystroke HUD, and the settings window.]
+<div align="center">
+  <img src="doc/hwoto.gif" alt="Cursor Highlighting Demo" width="854">
+</div>
+
 
 ---
 
