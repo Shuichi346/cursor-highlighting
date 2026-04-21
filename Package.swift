@@ -3,7 +3,6 @@ import PackageDescription
 
 let package = Package(
     name: "CursorHighlighting",
-    defaultLocalization: "en",
     platforms: [.macOS(.v26)],
     products: [
         .executable(name: "CursorHighlighting", targets: ["CursorHighlighting"])
@@ -21,9 +20,7 @@ let package = Package(
                 .product(name: "LaunchAtLogin", package: "LaunchAtLogin-Modern"),
                 "Defaults",
             ],
-            path: "Sources/CursorHighlighting",
-            exclude: ["Resources/Info.plist"],
-            resources: [.process("Resources")]
+            path: "Sources/CursorHighlighting"
         )
     ],
     swiftLanguageModes: [.v6]
