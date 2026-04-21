@@ -1,11 +1,10 @@
 import AppKit
 import Defaults
 
-// スポットライトオーバーレイウィンドウの管理クラス
+// スポットライトオーバーレイウィンドウの管理クラス（マルチモニタ対応）
 @MainActor
 final class SpotlightOverlayWindow {
-    private var panel: OverlayPanel?
-    private var overlayView: SpotlightOverlayView?
+    private var panels: [ObjectIdentifier: (panel: OverlayPanel, view: SpotlightOverlayView)] = [:]
     private var mouseStreamCancel: (@Sendable () -> Void)?
     private var trackingTask: Task<Void, Never>?
 
@@ -13,23 +12,22 @@ final class SpotlightOverlayWindow {
     func show() {
         hide()
 
-        guard let screen = preferredScreen(for: NSEvent.mouseLocation) else { return }
         let level = NSWindow.Level(rawValue: NSWindow.Level.screenSaver.rawValue - 1)
-        let newPanel = OverlayPanel(screen: screen, overlayLevel: level)
-        let view = SpotlightOverlayView(frame: NSRect(origin: .zero, size: screen.frame.size))
-        view.autoresizingMask = [.width, .height]
 
-        // 現在の設定を適用
-        view.spotlightRadius = CGFloat(Defaults[.spotlightRadius])
-        view.blurRadius = CGFloat(Defaults[.spotlightBlur])
-        view.overlayOpacity = CGFloat(Defaults[.spotlightOpacity])
-        view.spotlightColor = Defaults[.spotlightColor].nsColor
+        // 全ディスプレイにパネルを配置
+        for screen in NSScreen.screens {
+            let newPanel = OverlayPanel(screen: screen, overlayLevel: level)
+            let view = SpotlightOverlayView(frame: NSRect(origin: .zero, size: screen.frame.size))
+            view.autoresizingMask = [.width, .height]
 
-        newPanel.contentView = view
-        newPanel.showFullScreen()
+            applySettings(to: view)
 
-        self.panel = newPanel
-        self.overlayView = view
+            newPanel.contentView = view
+            newPanel.showFullScreen()
+
+            let key = ObjectIdentifier(screen)
+            panels[key] = (panel: newPanel, view: view)
+        }
 
         // 初期カーソル位置を設定
         updateCursorPosition(NSEvent.mouseLocation)
@@ -56,31 +54,47 @@ final class SpotlightOverlayWindow {
         trackingTask = nil
         mouseStreamCancel?()
         mouseStreamCancel = nil
-        panel?.hideOverlay()
-        panel = nil
-        overlayView = nil
+        for (_, entry) in panels {
+            entry.panel.hideOverlay()
+        }
+        panels.removeAll()
     }
 
     // 設定変更を反映
     func updateSettings() {
-        overlayView?.spotlightRadius = CGFloat(Defaults[.spotlightRadius])
-        overlayView?.blurRadius = CGFloat(Defaults[.spotlightBlur])
-        overlayView?.overlayOpacity = CGFloat(Defaults[.spotlightOpacity])
-        overlayView?.spotlightColor = Defaults[.spotlightColor].nsColor
-        overlayView?.needsDisplay = true
+        for (_, entry) in panels {
+            applySettings(to: entry.view)
+            entry.view.needsDisplay = true
+        }
     }
 
     // スクリーン座標からビュー座標へ変換してカーソル位置を更新
     private func updateCursorPosition(_ screenPoint: NSPoint) {
-        guard let panel, let overlayView else { return }
+        let cursorScreen = preferredScreen(for: screenPoint)
 
-        if let screen = preferredScreen(for: screenPoint), screen !== panel.currentScreen {
-            panel.move(to: screen)
+        for (_, entry) in panels {
+            let panel = entry.panel
+            let view = entry.view
+
+            if panel.currentScreen === cursorScreen {
+                // カーソルがあるスクリーンではスポットライトを表示
+                let windowPoint = panel.convertPoint(fromScreen: screenPoint)
+                let viewPoint = view.convert(windowPoint, from: nil)
+                view.cursorPosition = viewPoint
+                view.overlayOpacity = CGFloat(Defaults[.spotlightOpacity])
+            } else {
+                // カーソルのない画面は全面暗幕
+                view.cursorPosition = NSPoint(x: -99999, y: -99999)
+                view.overlayOpacity = CGFloat(Defaults[.spotlightOpacity])
+            }
         }
+    }
 
-        let windowPoint = panel.convertPoint(fromScreen: screenPoint)
-        let viewPoint = overlayView.convert(windowPoint, from: nil)
-        overlayView.cursorPosition = viewPoint
+    private func applySettings(to view: SpotlightOverlayView) {
+        view.spotlightRadius = CGFloat(Defaults[.spotlightRadius])
+        view.blurRadius = CGFloat(Defaults[.spotlightBlur])
+        view.overlayOpacity = CGFloat(Defaults[.spotlightOpacity])
+        view.spotlightColor = Defaults[.spotlightColor].nsColor
     }
 
     private func preferredScreen(for point: NSPoint) -> NSScreen? {

@@ -7,6 +7,11 @@ import SwiftUI
 struct GeneralSettingsContentView: View {
     @State private var showResetAlert = false
 
+    // Info.plistからバージョン文字列を動的に取得
+    private var appVersion: String {
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0.6"
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
             PageHeader(
@@ -60,7 +65,7 @@ struct GeneralSettingsContentView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Cursor Highlighting")
                             .font(.system(size: 13, weight: .semibold))
-                        Text("v1.0.5 · MIT License")
+                        Text("v\(appVersion) · MIT License")
                             .font(.system(size: 11))
                             .foregroundStyle(.secondary)
                     }
@@ -102,5 +107,8 @@ struct GeneralSettingsContentView: View {
         KeyboardShortcuts.reset(.toggleSpotlight)
         KeyboardShortcuts.reset(.toggleClicks)
         KeyboardShortcuts.reset(.toggleKeyStrokes)
+
+        // Launch at Login を無効化
+        LaunchAtLogin.isEnabled = false
     }
 }

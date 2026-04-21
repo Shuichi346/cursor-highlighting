@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.6] - 2026-04-21
+
+### Fixed
+- **Keystrokes:** Fixed keystroke HUD displaying incorrect characters on non-US keyboard layouts (JIS, Dvorak, AZERTY, etc.). Now extracts Unicode characters directly from `CGEvent.keyboardGetUnicodeString` at the event tap callback, with `UCKeyTranslate` via `TISCopyCurrentKeyboardLayoutInputSource` as a secondary fallback. The previous static US QWERTY keycode table is retained only as a last resort.
+- **Keystrokes:** Added support for previously unhandled keys: F13–F20, numpad operators, JIS-specific keys (英数/かな), and other special keys that were displaying as `?`.
+- **Core / Lifecycle:** Fixed a potential busy-loop on app termination when accessibility permission had not been granted. The permission polling task now properly exits on cancellation instead of silently swallowing `CancellationError` and re-entering the loop.
+- **Settings:** "Reset All Settings" now also disables Launch at Login, matching the UI label "Restore all settings to their original default values."
+- **Spotlight:** Fixed the edge blur effect rendering as an unnatural dark halo outside the spotlight circle. The blur now draws a smooth opacity gradient from the spotlight boundary outward, correctly softening the edge transition.
+- **Spotlight:** Fixed spotlight overlay only covering the current display on multi-monitor setups. All connected screens are now dimmed simultaneously, with the spotlight cutout following the cursor across displays.
+- **Click Effects:** Fixed click ring animation shrinking instead of expanding when Ring Size was set below 5 px. The initial ring radius is now clamped proportionally to `maxRadius`. The minimum slider value has been raised to 5 px.
+- **Settings / Info.plist:** Unified version string across `Info.plist` (`CFBundleVersion`, `CFBundleShortVersionString`) and the Settings UI. Version is now read dynamically from `Bundle.main` instead of being hardcoded.
+
 ## [1.0.5] - 2026-04-21
 
 ### Fixed

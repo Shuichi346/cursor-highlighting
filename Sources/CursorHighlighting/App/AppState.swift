@@ -23,7 +23,14 @@ final class AppState {
 
         permissionObservationTask = Task { [weak self] in
             while let self = self, !self.permissionManager.isAccessibilityGranted {
-                try? await Task.sleep(for: .seconds(1))
+                do {
+                    try await Task.sleep(for: .seconds(1))
+                } catch {
+                    // キャンセルされた場合はループを脱出
+                    return
+                }
+                // sleep後にもキャンセル状態を確認
+                guard !Task.isCancelled else { return }
             }
             guard let self = self else { return }
             // 権限が付与されたらポーリングを停止

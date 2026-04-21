@@ -7,6 +7,8 @@ struct BridgedKeyEvent: Sendable {
     let keyCode: Int64
     let flags: CGEventFlags
     let type: CGEventType
+    // CGEventから直接取得したUnicode文字列（キーボードレイアウト反映済み）
+    let characters: String
 }
 
 // AsyncStream.ContinuationをCコールバックに渡すためのボックス型
@@ -52,6 +54,19 @@ final class EventTapBox: @unchecked Sendable {
     }
 }
 
+// CGEventからUnicode文字列を抽出する
+private func extractCharacters(from event: CGEvent) -> String {
+    var length = 0
+    // まず文字列長を取得
+    event.keyboardGetUnicodeString(
+        maxStringLength: 0, actualStringLength: &length, unicodeString: nil)
+    guard length > 0 else { return "" }
+    var chars = [UniChar](repeating: 0, count: length)
+    event.keyboardGetUnicodeString(
+        maxStringLength: length, actualStringLength: &length, unicodeString: &chars)
+    return String(utf16CodeUnits: chars, count: length)
+}
+
 // Cコンベンションのイベントタップコールバック
 private func cgEventCallback(
     proxy: CGEventTapProxy,
@@ -77,7 +92,9 @@ private func cgEventCallback(
     if type == .keyDown {
         let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
         let flags = event.flags
-        let bridgedEvent = BridgedKeyEvent(keyCode: keyCode, flags: flags, type: type)
+        let characters = extractCharacters(from: event)
+        let bridgedEvent = BridgedKeyEvent(
+            keyCode: keyCode, flags: flags, type: type, characters: characters)
         context.continuation.yield(bridgedEvent)
     }
 

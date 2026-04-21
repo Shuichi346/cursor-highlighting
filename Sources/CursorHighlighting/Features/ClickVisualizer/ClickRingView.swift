@@ -7,10 +7,13 @@ final class ClickRingView: NSView {
     private let ringLayer = CAShapeLayer()
     private let ringColor: NSColor
     private let maxRadius: CGFloat
+    private let initialRadius: CGFloat
 
     init(center: NSPoint, color: NSColor, maxRadius: CGFloat) {
         self.ringColor = color
         self.maxRadius = maxRadius
+        // maxRadiusが小さい場合でも拡大アニメーションになるよう初期半径をクランプ
+        self.initialRadius = min(5.0, maxRadius * 0.3)
 
         // ビューのフレームをリングの最大サイズに設定
         let size = maxRadius * 2 + 10
@@ -31,7 +34,6 @@ final class ClickRingView: NSView {
     // リングレイヤーの初期設定
     private func setupRingLayer() {
         let center = CGPoint(x: bounds.midX, y: bounds.midY)
-        let initialRadius: CGFloat = 5.0
         let initialPath = CGPath(
             ellipseIn: CGRect(
                 x: center.x - initialRadius,

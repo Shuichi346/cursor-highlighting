@@ -42,6 +42,11 @@ enum SettingsTab: String, CaseIterable, Identifiable {
 struct SettingsWindowView: View {
     @State private var selectedTab: SettingsTab = .spotlight
 
+    // Info.plistからバージョン文字列を動的に取得
+    private var appVersion: String {
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0.6"
+    }
+
     var body: some View {
         HStack(spacing: 0) {
             sidebar
@@ -70,7 +75,7 @@ struct SettingsWindowView: View {
                     Text("Cursor Highlighting")
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundStyle(.primary)
-                    Text("v1.0.5")
+                    Text("v\(appVersion)")
                         .font(.system(size: 10))
                         .foregroundStyle(.secondary)
                 }

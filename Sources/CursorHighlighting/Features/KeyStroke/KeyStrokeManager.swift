@@ -37,7 +37,8 @@ final class KeyStrokeManager {
                 guard let self = self else { break }
                 let displayString = KeySymbol.displayString(
                     keyCode: event.keyCode,
-                    modifiers: event.flags
+                    modifiers: event.flags,
+                    characters: event.characters
                 )
                 guard !displayString.isEmpty else { continue }
                 self.overlayWindow.addEntry(displayString)

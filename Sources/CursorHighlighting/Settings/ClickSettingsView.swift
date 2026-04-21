@@ -60,7 +60,7 @@ struct ClickSettingsContentView: View {
                 )
                 Divider().opacity(0.5)
                 SettingsRow(label: L("settings.clicks.ringSize")) {
-                    ValueSlider(value: $ringMaxRadius, in: 0...80, step: 5, unit: "px")
+                    ValueSlider(value: $ringMaxRadius, in: 5...80, step: 5, unit: "px")
                 }
             }
         }

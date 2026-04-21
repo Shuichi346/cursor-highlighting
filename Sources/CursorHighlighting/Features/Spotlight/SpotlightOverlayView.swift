@@ -29,34 +29,66 @@ final class SpotlightOverlayView: NSView {
 
         // 背景の暗幕を描画（opacity > 0 の場合のみ）
         if overlayOpacity > 0 {
-            // Even-Oddフィルルールでスポットライト切り抜きを描画
-            let path = CGMutablePath()
-            path.addRect(bounds)
-            path.addEllipse(in: circleRect)
+            if blurRadius > 0 {
+                // ぼかしあり: 内側（完全透明）から外側（完全暗幕）へ滑らかに遷移
+                let gradientSteps = 30
+                for i in 0..<gradientSteps {
+                    let progress = CGFloat(i) / CGFloat(gradientSteps)
+                    // ぼかし領域の内縁から外縁へ
+                    let innerRadius = spotlightRadius + (blurRadius * progress)
+                    let outerRadius =
+                        spotlightRadius + (blurRadius * (progress + 1.0 / CGFloat(gradientSteps)))
+                    // 不透明度は0からoverlayOpacityへ滑らかに増加（イージング適用）
+                    let easedProgress = progress * progress
+                    let alpha = overlayOpacity * easedProgress
 
-            context.setFillColor(NSColor.black.withAlphaComponent(overlayOpacity).cgColor)
-            context.addPath(path)
-            context.fillPath(using: .evenOdd)
-        }
+                    let ringPath = CGMutablePath()
+                    // 外側の楕円
+                    ringPath.addEllipse(
+                        in: CGRect(
+                            x: cursorPosition.x - outerRadius,
+                            y: cursorPosition.y - outerRadius,
+                            width: outerRadius * 2,
+                            height: outerRadius * 2
+                        ))
+                    // 内側の楕円（even-oddで切り抜き）
+                    ringPath.addEllipse(
+                        in: CGRect(
+                            x: cursorPosition.x - innerRadius,
+                            y: cursorPosition.y - innerRadius,
+                            width: innerRadius * 2,
+                            height: innerRadius * 2
+                        ))
 
-        // ぼかしエフェクト: 円の境界にグラデーションリングを描画
-        if blurRadius > 0 && overlayOpacity > 0 {
-            let gradientSteps = 20
-            for i in 0..<gradientSteps {
-                let progress = CGFloat(i) / CGFloat(gradientSteps)
-                let currentRadius = spotlightRadius + (blurRadius * progress)
-                let alpha = overlayOpacity * progress * 0.5
+                    context.setFillColor(NSColor.black.withAlphaComponent(alpha).cgColor)
+                    context.addPath(ringPath)
+                    context.fillPath(using: .evenOdd)
+                }
 
-                let ringRect = CGRect(
-                    x: cursorPosition.x - currentRadius,
-                    y: cursorPosition.y - currentRadius,
-                    width: currentRadius * 2,
-                    height: currentRadius * 2
-                )
+                // ぼかし領域の外側は完全な暗幕
+                let outerCutoffRadius = spotlightRadius + blurRadius
+                let outerPath = CGMutablePath()
+                outerPath.addRect(bounds)
+                outerPath.addEllipse(
+                    in: CGRect(
+                        x: cursorPosition.x - outerCutoffRadius,
+                        y: cursorPosition.y - outerCutoffRadius,
+                        width: outerCutoffRadius * 2,
+                        height: outerCutoffRadius * 2
+                    ))
 
-                context.setStrokeColor(NSColor.black.withAlphaComponent(alpha).cgColor)
-                context.setLineWidth(blurRadius / CGFloat(gradientSteps))
-                context.strokeEllipse(in: ringRect)
+                context.setFillColor(NSColor.black.withAlphaComponent(overlayOpacity).cgColor)
+                context.addPath(outerPath)
+                context.fillPath(using: .evenOdd)
+            } else {
+                // ぼかしなし: シャープな切り抜き
+                let path = CGMutablePath()
+                path.addRect(bounds)
+                path.addEllipse(in: circleRect)
+
+                context.setFillColor(NSColor.black.withAlphaComponent(overlayOpacity).cgColor)
+                context.addPath(path)
+                context.fillPath(using: .evenOdd)
             }
         }
 
