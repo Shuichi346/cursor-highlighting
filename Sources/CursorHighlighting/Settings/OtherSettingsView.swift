@@ -60,7 +60,7 @@ struct GeneralSettingsContentView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Cursor Highlighting")
                             .font(.system(size: 13, weight: .semibold))
-                        Text("v1.0.2 · MIT License")
+                        Text("v1.0.5 · MIT License")
                             .font(.system(size: 11))
                             .foregroundStyle(.secondary)
                     }

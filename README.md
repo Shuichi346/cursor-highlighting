@@ -54,9 +54,11 @@ The app runs entirely from the menu bar with no Dock icon, staying out of your w
 
 - **Click Effects** — Displays animated, color-coded expanding rings on left and right mouse clicks, making every click visible to viewers.
 
-- **Keystroke Display** — Shows pressed keys in a bottom-center HUD overlay with native macOS modifier symbols (`⌘` `⌥` `⇧` `⌃` `⇪` `fn`), perfect for demonstrating keyboard shortcuts.
+- **Keystroke Display** — Shows pressed keys in a bottom-center HUD overlay with native macOS modifier symbols (`⌘` `⌥` `⇧` `⌃` `⇪` `fn`), with selectable Light/Dark theme. Perfect for demonstrating keyboard shortcuts.
 
 - **Global Hotkeys** — All features are togglable via fully customizable global keyboard shortcuts that work even when other apps are in the foreground.
+
+- **Multi-Monitor Support** — All overlays seamlessly follow the cursor across connected displays.
 
 - **Real-time Settings** — Every setting (colors, sizes, opacity, blur) applies instantly while features are active — no restart required.
 
@@ -71,7 +73,6 @@ The app runs entirely from the menu bar with no Dock icon, staying out of your w
 <div align="center">
   <img src="doc/hwoto.gif" alt="Cursor Highlighting Demo" width="854">
 </div>
-
 
 ---
 
@@ -114,6 +115,9 @@ make run
 # Or build the .app bundle and open it
 make app
 open build/CursorHighlighting.app
+
+# Install to Applications folder
+cp -r build/CursorHighlighting.app /Applications/
 ```
 
 ---
@@ -129,6 +133,61 @@ On first launch, you will be prompted to grant access. If the prompt doesn't app
 3. Enable **Cursor Highlighting**
 
 The app polls for permission status and will activate features automatically once access is granted.
+
+---
+
+## Configuration
+
+Open the Settings window from the menu bar dropdown. The settings are organized into four tabs with a sidebar navigation:
+
+### Spotlight
+
+| Setting | Description | Default |
+|---|---|---|
+| Enable Spotlight | Toggle the spotlight effect | On |
+| Activation Hotkey | Global shortcut to toggle | *(none)* |
+| Spotlight Radius | Size of the bright area | 30 px |
+| Edge Blur | Softness of the circle edge | 0 px |
+| Background Opacity | Darkness of surrounding screen | 0% |
+| Spotlight Color | Tint color of the spotlight circle | Semi-transparent red |
+
+### Click Effects
+
+| Setting | Description | Default |
+|---|---|---|
+| Enable Click Rings | Toggle click visualization | On |
+| Hotkey | Global shortcut to toggle | *(none)* |
+| Left Click Color | Color of left-click rings | Blue (`#007AFF`) |
+| Right Click Color | Color of right-click rings | Red (`#FF3B30`) |
+| Ring Size | Maximum radius of expanding ring | 30 px |
+
+### Keystrokes
+
+| Setting | Description | Default |
+|---|---|---|
+| Show Keystrokes | Toggle keystroke HUD | Off |
+| Hotkey | Global shortcut to toggle | *(none)* |
+| Font Size | Size of displayed key text | 48 pt |
+| Theme | Light or Dark HUD background | Dark |
+
+### General
+
+| Setting | Description |
+|---|---|
+| Launch at Login | Auto-start on login |
+| Reset to Defaults | Restore all settings to original values |
+
+---
+
+## Keyboard Shortcuts
+
+| Feature | Default Shortcut | Customizable |
+|---|---|---|
+| Mouse Spotlight | *(none)* | ✅ |
+| Click Effects | *(none)* | ✅ |
+| Keystroke Display | *(none)* | ✅ |
+
+All shortcuts are global and work regardless of which application is in the foreground. Customize them in the respective Settings tabs using the built-in hotkey recorder.
 
 ---
 
@@ -149,10 +208,9 @@ Sources/CursorHighlighting/
 │   ├── Spotlight/              # Fullscreen dim overlay with cursor-following circle
 │   ├── ClickVisualizer/        # Expanding ring animations on mouse clicks
 │   └── KeyStroke/              # Bottom-center HUD for pressed keys
-├── Settings/                   # SwiftUI settings window with sidebar navigation
+├── Settings/                   # Custom SwiftUI settings window with sidebar navigation
 ├── Overlay/                    # Shared NSPanel subclass for transparent overlays
-├── Utilities/                  # Color serialization, key symbol mapping, localization
-└── Resources/                  # Info.plist, Localizable.strings
+└── Utilities/                  # Color serialization, key symbol mapping, localization
 ```
 
 ### Concurrency Model
@@ -160,7 +218,6 @@ Sources/CursorHighlighting/
 The central technical challenge is safely bridging `CGEventTapCallBack` (a C-convention function pointer called on an arbitrary thread) into Swift's structured concurrency. The solution uses `AsyncStream.Continuation` — which is thread-safe for `yield` calls — to pass events from the C callback into a `for await` loop running on `@MainActor`. The compiler statically verifies that all UI updates happen on the main actor, eliminating an entire class of threading bugs.
 
 - **No `DispatchQueue.main.async`** anywhere in the codebase — all main-thread dispatch uses `@MainActor` isolation
-- **Only one `@unchecked Sendable`** in the entire project (the minimal C-bridge wrapper in `CGEventBridge.swift`)
 - All features use `AsyncStream` for event processing and `Defaults.updates()` for reactive settings observation
 
 ---

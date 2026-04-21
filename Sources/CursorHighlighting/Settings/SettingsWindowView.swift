@@ -70,7 +70,7 @@ struct SettingsWindowView: View {
                     Text("Cursor Highlighting")
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundStyle(.primary)
-                    Text("v1.0.2")
+                    Text("v1.0.5")
                         .font(.system(size: 10))
                         .foregroundStyle(.secondary)
                 }
