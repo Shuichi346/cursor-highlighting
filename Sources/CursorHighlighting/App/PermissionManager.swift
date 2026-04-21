@@ -12,12 +12,15 @@ final class PermissionManager {
     func checkAndRequestAccessibility() {
         isAccessibilityGranted = AXIsProcessTrusted()
 
-        if !isAccessibilityGranted {
-            // Swift 6ではkAXTrustedCheckOptionPromptが可変グローバル変数として扱われるため、定数文字列を直接使用
-            let options = ["AXTrustedCheckOptionPrompt": true] as CFDictionary
-            _ = AXIsProcessTrustedWithOptions(options)
-            startPolling()
+        guard !isAccessibilityGranted else {
+            stopPolling()
+            return
         }
+
+        // Swift 6ではkAXTrustedCheckOptionPromptが可変グローバル変数として扱われるため、定数文字列を直接使用
+        let options = ["AXTrustedCheckOptionPrompt": true] as CFDictionary
+        _ = AXIsProcessTrustedWithOptions(options)
+        startPolling()
     }
 
     // 権限が付与されるまで定期的にポーリング
@@ -26,8 +29,10 @@ final class PermissionManager {
         pollTask = Task { [weak self] in
             while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(2))
+                guard let self = self else { break }
                 if AXIsProcessTrusted() {
-                    self?.isAccessibilityGranted = true
+                    self.isAccessibilityGranted = true
+                    self.pollTask = nil
                     break
                 }
             }

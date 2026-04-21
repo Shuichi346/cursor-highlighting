@@ -11,9 +11,13 @@ final class SpotlightOverlayWindow {
 
     // オーバーレイを表示してマウス追跡を開始
     func show() {
+        hide()
+
+        guard let screen = preferredScreen(for: NSEvent.mouseLocation) else { return }
         let level = NSWindow.Level(rawValue: NSWindow.Level.screenSaver.rawValue - 1)
-        let newPanel = OverlayPanel(overlayLevel: level)
-        let view = SpotlightOverlayView(frame: newPanel.frame)
+        let newPanel = OverlayPanel(screen: screen, overlayLevel: level)
+        let view = SpotlightOverlayView(frame: NSRect(origin: .zero, size: screen.frame.size))
+        view.autoresizingMask = [.width, .height]
 
         // 現在の設定を適用
         view.spotlightRadius = CGFloat(Defaults[.spotlightRadius])
@@ -68,11 +72,18 @@ final class SpotlightOverlayWindow {
 
     // スクリーン座標からビュー座標へ変換してカーソル位置を更新
     private func updateCursorPosition(_ screenPoint: NSPoint) {
-        guard let panel = panel else { return }
-        let panelFrame = panel.frame
-        // スクリーン座標（左下原点）→ ビュー座標（左上原点、isFlipped=true）
-        let viewX = screenPoint.x - panelFrame.origin.x
-        let viewY = panelFrame.height - (screenPoint.y - panelFrame.origin.y)
-        overlayView?.cursorPosition = NSPoint(x: viewX, y: viewY)
+        guard let panel, let overlayView else { return }
+
+        if let screen = preferredScreen(for: screenPoint), screen !== panel.currentScreen {
+            panel.move(to: screen)
+        }
+
+        let windowPoint = panel.convertPoint(fromScreen: screenPoint)
+        let viewPoint = overlayView.convert(windowPoint, from: nil)
+        overlayView.cursorPosition = viewPoint
+    }
+
+    private func preferredScreen(for point: NSPoint) -> NSScreen? {
+        NSScreen.containing(point) ?? NSScreen.main ?? NSScreen.screens.first
     }
 }

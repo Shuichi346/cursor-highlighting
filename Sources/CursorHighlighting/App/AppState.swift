@@ -1,6 +1,6 @@
 import AppKit
 import Defaults
-import Settings
+import SwiftUI
 
 // アプリ全体の状態管理
 @MainActor
@@ -10,80 +10,73 @@ final class AppState {
     let spotlightManager: SpotlightManager
     let clickManager: ClickManager
     let keyStrokeManager: KeyStrokeManager
-    private var settingsWindowController: SettingsWindowController?
+    private var settingsWindow: NSWindow?
     private var permissionObservationTask: Task<Void, Never>?
+    private var terminationObserver: NSObjectProtocol?
 
     init() {
-        // 各マネージャーを初期化
         spotlightManager = SpotlightManager()
         clickManager = ClickManager()
         keyStrokeManager = KeyStrokeManager()
 
-        // アクセシビリティ権限の確認
         permissionManager.checkAndRequestAccessibility()
 
-        // 権限付与後にキーストロークを有効化（CGEventTapに権限が必要）
         permissionObservationTask = Task { [weak self] in
-            // 権限が付与されるまで待機
             while let self = self, !self.permissionManager.isAccessibilityGranted {
                 try? await Task.sleep(for: .seconds(1))
             }
-            // 権限が付与された時点でキーストロークが有効設定なら有効化
-            if let self = self, Defaults[.keyStrokeEnabled], !self.keyStrokeManager.isActive {
+            guard let self = self else { return }
+            // 権限が付与されたらポーリングを停止
+            self.permissionManager.stopPolling()
+            // キーストロークが有効かつ未起動なら起動する
+            if Defaults[.keyStrokeEnabled], !self.keyStrokeManager.isActive {
                 self.keyStrokeManager.activate()
+            }
+        }
+
+        terminationObserver = NotificationCenter.default.addObserver(
+            forName: NSApplication.willTerminateNotification,
+            object: NSApp,
+            queue: nil
+        ) { [weak self] _ in
+            Task { @MainActor in
+                self?.shutdown()
             }
         }
     }
 
-    // 設定ウィンドウを表示
+    // カスタム設定ウィンドウを表示
     func showSettings() {
-        if settingsWindowController == nil {
-            settingsWindowController = SettingsWindowController(
-                panes: [
-                    Settings.Pane(
-                        identifier: Settings.PaneIdentifier("spotlight"),
-                        title: L("settings.spotlight.title"),
-                        toolbarIcon: NSImage(
-                            systemSymbolName: "light.max",
-                            accessibilityDescription: nil
-                        )!
-                    ) {
-                        SpotlightSettingsView()
-                    },
-                    Settings.Pane(
-                        identifier: Settings.PaneIdentifier("clicks"),
-                        title: L("settings.clicks.title"),
-                        toolbarIcon: NSImage(
-                            systemSymbolName: "cursorarrow.click.2",
-                            accessibilityDescription: nil
-                        )!
-                    ) {
-                        ClickSettingsView()
-                    },
-                    Settings.Pane(
-                        identifier: Settings.PaneIdentifier("keystrokes"),
-                        title: L("settings.keystrokes.title"),
-                        toolbarIcon: NSImage(
-                            systemSymbolName: "keyboard",
-                            accessibilityDescription: nil
-                        )!
-                    ) {
-                        KeyStrokeSettingsView()
-                    },
-                    Settings.Pane(
-                        identifier: Settings.PaneIdentifier("others"),
-                        title: L("settings.others.title"),
-                        toolbarIcon: NSImage(
-                            systemSymbolName: "gearshape",
-                            accessibilityDescription: nil
-                        )!
-                    ) {
-                        OtherSettingsView()
-                    },
-                ]
-            )
+        if let existing = settingsWindow, existing.isVisible {
+            existing.makeKeyAndOrderFront(nil)
+            NSApp.activate(ignoringOtherApps: true)
+            return
         }
-        settingsWindowController?.show()
+
+        let hostingController = NSHostingController(rootView: SettingsWindowView())
+
+        let window = NSWindow(contentViewController: hostingController)
+        window.title = "Cursor Highlighting"
+        window.styleMask = [.titled, .closable, .miniaturizable]
+        window.setContentSize(NSSize(width: 720, height: 520))
+        window.center()
+        window.isReleasedWhenClosed = false
+        window.titlebarAppearsTransparent = true
+        window.titleVisibility = .hidden
+        window.backgroundColor = NSColor.windowBackgroundColor
+
+        window.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
+
+        self.settingsWindow = window
+    }
+
+    func shutdown() {
+        permissionObservationTask?.cancel()
+        permissionObservationTask = nil
+        permissionManager.stopPolling()
+        spotlightManager.shutdown()
+        clickManager.shutdown()
+        keyStrokeManager.shutdown()
     }
 }

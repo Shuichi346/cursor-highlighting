@@ -3,14 +3,12 @@ import PackageDescription
 
 let package = Package(
     name: "CursorHighlighting",
-    defaultLocalization: "en",
     platforms: [.macOS(.v26)],
     products: [
         .executable(name: "CursorHighlighting", targets: ["CursorHighlighting"])
     ],
     dependencies: [
         .package(url: "https://github.com/sindresorhus/KeyboardShortcuts", from: "2.4.0"),
-        .package(url: "https://github.com/sindresorhus/Settings", from: "3.1.0"),
         .package(url: "https://github.com/sindresorhus/LaunchAtLogin-Modern", from: "1.1.0"),
         .package(url: "https://github.com/sindresorhus/Defaults", from: "9.0.0"),
     ],
@@ -19,13 +17,10 @@ let package = Package(
             name: "CursorHighlighting",
             dependencies: [
                 "KeyboardShortcuts",
-                "Settings",
                 .product(name: "LaunchAtLogin", package: "LaunchAtLogin-Modern"),
                 "Defaults",
             ],
-            path: "Sources/CursorHighlighting",
-            exclude: ["Resources/Info.plist"],
-            resources: [.process("Resources")]
+            path: "Sources/CursorHighlighting"
         )
     ],
     swiftLanguageModes: [.v6]

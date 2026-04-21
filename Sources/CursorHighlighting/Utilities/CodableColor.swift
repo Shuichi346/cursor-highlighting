@@ -38,13 +38,24 @@ struct CodableColor: Codable, Sendable, Equatable, Defaults.Serializable {
         Color(nsColor: nsColor)
     }
 
+    // Hex文字列を返す（UI表示用）
+    var hexString: String {
+        String(format: "#%02X%02X%02X", Int(red * 255), Int(green * 255), Int(blue * 255))
+    }
+
     // Hex文字列からパース（"#RRGGBB" 形式）
     static func fromHex(_ hex: String) -> CodableColor {
         var hexSanitized = hex.trimmingCharacters(in: .whitespacesAndNewlines)
         hexSanitized = hexSanitized.replacingOccurrences(of: "#", with: "")
 
+        guard hexSanitized.count == 6 else {
+            return CodableColor(red: 0, green: 0, blue: 0, alpha: 1.0)
+        }
+
         var rgb: UInt64 = 0
-        Scanner(string: hexSanitized).scanHexInt64(&rgb)
+        guard Scanner(string: hexSanitized).scanHexInt64(&rgb) else {
+            return CodableColor(red: 0, green: 0, blue: 0, alpha: 1.0)
+        }
 
         let r = Double((rgb & 0xFF0000) >> 16) / 255.0
         let g = Double((rgb & 0x00FF00) >> 8) / 255.0
@@ -56,5 +67,5 @@ struct CodableColor: Codable, Sendable, Equatable, Defaults.Serializable {
     // デフォルトカラー定義
     static let blue = CodableColor.fromHex("#007AFF")
     static let red = CodableColor.fromHex("#FF3B30")
-    static let spotlightDefault = CodableColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 0.5)
+    static let spotlightDefault = CodableColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 0.5)
 }

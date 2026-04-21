@@ -13,15 +13,18 @@ final class KeyStrokeOverlayWindow {
 
     // オーバーレイを表示
     func show() {
-        let level = NSWindow.Level(rawValue: NSWindow.Level.screenSaver.rawValue + 1)
-        let newPanel = OverlayPanel(overlayLevel: level)
+        cleanupTask?.cancel()
+        cleanupTask = nil
+        panel?.hideOverlay()
+        panel = nil
+        hostingView = nil
 
-        let hudView = KeyStrokeHUDView(
-            entries: entries,
-            fontSize: Defaults[.keyStrokeFontSize]
-        )
-        let hosting = NSHostingView(rootView: hudView)
-        hosting.frame = newPanel.frame
+        guard let screen = preferredScreen() else { return }
+        let level = NSWindow.Level(rawValue: NSWindow.Level.screenSaver.rawValue + 1)
+        let newPanel = OverlayPanel(screen: screen, overlayLevel: level)
+
+        let hosting = NSHostingView(rootView: makeHUDView())
+        hosting.frame = NSRect(origin: .zero, size: screen.frame.size)
         hosting.autoresizingMask = [.width, .height]
 
         newPanel.contentView = hosting
@@ -30,16 +33,7 @@ final class KeyStrokeOverlayWindow {
         self.panel = newPanel
         self.hostingView = hosting
 
-        // 古いエントリを定期的に削除
-        cleanupTask = Task { [weak self] in
-            while !Task.isCancelled {
-                try? await Task.sleep(for: .milliseconds(500))
-                guard let self = self else { break }
-                let now = Date()
-                self.entries.removeAll { now.timeIntervalSince($0.timestamp) > 2.0 }
-                self.refreshView()
-            }
-        }
+        startCleanupTask()
     }
 
     // オーバーレイを非表示
@@ -54,6 +48,7 @@ final class KeyStrokeOverlayWindow {
 
     // エントリを追加
     func addEntry(_ text: String) {
+        moveToCurrentScreenIfNeeded()
         entries.append(KeyStrokeEntry(text: text, timestamp: Date()))
         if entries.count > 10 {
             entries.removeFirst()
@@ -61,11 +56,52 @@ final class KeyStrokeOverlayWindow {
         refreshView()
     }
 
-    // ホスティングビューのrootViewを更新
+    // フォントサイズ・テーマ変更を即時反映
+    func updateAppearance() {
+        refreshView()
+    }
+
+    // 下位互換: フォントサイズ変更のみの呼び出し
+    func updateFontSize() {
+        refreshView()
+    }
+
     private func refreshView() {
-        hostingView?.rootView = KeyStrokeHUDView(
+        moveToCurrentScreenIfNeeded()
+        hostingView?.rootView = makeHUDView()
+    }
+
+    private func makeHUDView() -> KeyStrokeHUDView {
+        KeyStrokeHUDView(
             entries: entries,
-            fontSize: Defaults[.keyStrokeFontSize]
+            fontSize: Defaults[.keyStrokeFontSize],
+            theme: Defaults[.keyStrokeTheme]
         )
+    }
+
+    private func startCleanupTask() {
+        cleanupTask = Task { [weak self] in
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .milliseconds(500))
+                guard let self = self else { break }
+                let now = Date()
+                let previousCount = self.entries.count
+                self.entries.removeAll { now.timeIntervalSince($0.timestamp) > 2.0 }
+                if self.entries.count != previousCount {
+                    self.refreshView()
+                }
+            }
+        }
+    }
+
+    private func moveToCurrentScreenIfNeeded() {
+        guard let panel, let screen = preferredScreen(), screen !== panel.currentScreen else {
+            return
+        }
+        panel.move(to: screen)
+    }
+
+    private func preferredScreen() -> NSScreen? {
+        NSScreen.containing(NSEvent.mouseLocation) ?? NSScreen.main ?? NSScreen.screens.first
     }
 }
