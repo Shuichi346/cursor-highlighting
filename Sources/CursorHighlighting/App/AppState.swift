@@ -6,55 +6,62 @@ import SwiftUI
 @MainActor
 @Observable
 final class AppState {
-    let permissionManager = PermissionManager()
+    let permissionManager: PermissionManager
     let spotlightManager: SpotlightManager
     let clickManager: ClickManager
     let keyStrokeManager: KeyStrokeManager
     private var settingsWindow: NSWindow?
-    private var permissionObservationTask: Task<Void, Never>?
-    private var terminationObserver: NSObjectProtocol?
+    private var keyStrokeObservationTask: Task<Void, Never>?
+    private var screenParametersObserver: NSObjectProtocol?
+    private var didStart = false
 
-    init() {
+    init(permissionManager: PermissionManager = PermissionManager()) {
+        self.permissionManager = permissionManager
         spotlightManager = SpotlightManager()
         clickManager = ClickManager()
         keyStrokeManager = KeyStrokeManager()
+    }
 
-        permissionManager.checkAndRequestAccessibility()
+    func start() {
+        guard !didStart else { return }
+        didStart = true
 
-        permissionObservationTask = Task { [weak self] in
-            while let self = self, !self.permissionManager.isAccessibilityGranted {
-                do {
-                    try await Task.sleep(for: .seconds(1))
-                } catch {
-                    // キャンセルされた場合はループを脱出
-                    return
-                }
-                // sleep後にもキャンセル状態を確認
-                guard !Task.isCancelled else { return }
-            }
-            guard let self = self else { return }
-            // 権限が付与されたらポーリングを停止
-            self.permissionManager.stopPolling()
-            // キーストロークが有効かつ未起動なら起動する
-            if Defaults[.keyStrokeEnabled], !self.keyStrokeManager.isActive {
-                self.keyStrokeManager.activate()
+        spotlightManager.start()
+        clickManager.start()
+        keyStrokeManager.start()
+
+        permissionManager.onAuthorizationChange = { [weak self] isGranted in
+            self?.applyInputMonitoringStatus(isGranted)
+        }
+
+        keyStrokeObservationTask = Task { [weak self] in
+            for await isEnabled in Defaults.updates(.keyStrokeEnabled, initial: false) {
+                self?.applyKeyStrokeEnabledState(isEnabled, requestPermission: isEnabled)
             }
         }
 
-        terminationObserver = NotificationCenter.default.addObserver(
-            forName: NSApplication.willTerminateNotification,
+        screenParametersObserver = NotificationCenter.default.addObserver(
+            forName: NSApplication.didChangeScreenParametersNotification,
             object: NSApp,
-            queue: nil
+            queue: .main
         ) { [weak self] _ in
             Task { @MainActor in
-                self?.shutdown()
+                self?.screenParametersDidChange()
             }
         }
+
+        applyKeyStrokeEnabledState(
+            Defaults[.keyStrokeEnabled],
+            requestPermission: Defaults[.keyStrokeEnabled]
+        )
     }
 
     // カスタム設定ウィンドウを表示
     func showSettings() {
-        if let existing = settingsWindow, existing.isVisible {
+        if let existing = settingsWindow {
+            if existing.isMiniaturized {
+                existing.deminiaturize(nil)
+            }
             existing.makeKeyAndOrderFront(nil)
             NSApp.activate(ignoringOtherApps: true)
             return
@@ -78,12 +85,59 @@ final class AppState {
         self.settingsWindow = window
     }
 
+    func applicationDidBecomeActive() {
+        guard didStart else { return }
+        let isGranted = permissionManager.refreshInputMonitoringStatus()
+        applyInputMonitoringStatus(isGranted)
+    }
+
     func shutdown() {
-        permissionObservationTask?.cancel()
-        permissionObservationTask = nil
+        guard didStart else { return }
+        didStart = false
+        keyStrokeObservationTask?.cancel()
+        keyStrokeObservationTask = nil
+        if let screenParametersObserver {
+            NotificationCenter.default.removeObserver(screenParametersObserver)
+            self.screenParametersObserver = nil
+        }
+        permissionManager.onAuthorizationChange = nil
         permissionManager.stopPolling()
         spotlightManager.shutdown()
         clickManager.shutdown()
         keyStrokeManager.shutdown()
+    }
+
+    private func applyKeyStrokeEnabledState(
+        _ isEnabled: Bool,
+        requestPermission: Bool
+    ) {
+        guard isEnabled else {
+            permissionManager.stopPolling()
+            keyStrokeManager.deactivate()
+            return
+        }
+
+        if permissionManager.refreshInputMonitoringStatus() {
+            keyStrokeManager.activate()
+        } else {
+            keyStrokeManager.deactivate()
+            if requestPermission {
+                permissionManager.requestInputMonitoring()
+            }
+        }
+    }
+
+    private func applyInputMonitoringStatus(_ isGranted: Bool) {
+        guard Defaults[.keyStrokeEnabled], isGranted else {
+            keyStrokeManager.deactivate()
+            return
+        }
+        keyStrokeManager.activate()
+    }
+
+    private func screenParametersDidChange() {
+        spotlightManager.screenParametersDidChange()
+        clickManager.screenParametersDidChange()
+        keyStrokeManager.screenParametersDidChange()
     }
 }

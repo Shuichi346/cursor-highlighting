@@ -1,0 +1,64 @@
+name: CursorHighlighting
+
+options:
+  minimumXcodeGenVersion: 2.46.0
+  deploymentTarget:
+    macOS: "26.0"
+
+packages:
+  KeyboardShortcuts:
+    url: https://github.com/sindresorhus/KeyboardShortcuts
+    from: 3.0.1
+  LaunchAtLogin:
+    url: https://github.com/sindresorhus/LaunchAtLogin-Modern
+    from: 1.1.0
+  Defaults:
+    url: https://github.com/sindresorhus/Defaults
+    from: 9.0.9
+
+settings:
+  base:
+    CODE_SIGN_IDENTITY: "-"
+    CODE_SIGN_STYLE: Manual
+    DEVELOPMENT_TEAM: ""
+    ENABLE_HARDENED_RUNTIME: YES
+    SWIFT_STRICT_CONCURRENCY: complete
+    SWIFT_VERSION: 6.0
+  configs:
+    Debug:
+      CODE_SIGN_INJECT_BASE_ENTITLEMENTS: YES
+    Release:
+      CODE_SIGN_INJECT_BASE_ENTITLEMENTS: NO
+
+targets:
+  CursorHighlighting:
+    type: application
+    platform: macOS
+    deploymentTarget: "26.0"
+    sources:
+      - path: Sources/CursorHighlighting
+      - path: Resources/icon/icon.icns
+        buildPhase: resources
+        group: Resources
+    dependencies:
+      - package: KeyboardShortcuts
+      - package: LaunchAtLogin
+        product: LaunchAtLogin
+      - package: Defaults
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: Resources/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: com.shuichi.cursor-highlighting
+        PRODUCT_NAME: CursorHighlighting
+        SWIFT_TREAT_WARNINGS_AS_ERRORS: YES
+
+schemes:
+  CursorHighlighting:
+    build:
+      targets:
+        CursorHighlighting: all
+    run:
+      config: Debug
+    archive:
+      config: Release

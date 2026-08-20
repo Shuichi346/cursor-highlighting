@@ -7,18 +7,21 @@ import KeyboardShortcuts
 @Observable
 final class ClickManager {
     private let overlayWindow = ClickOverlayWindow()
-    private var clickStreamCancel: (@Sendable () -> Void)?
+    private var clickStreamCancel: (@MainActor () -> Void)?
     private var consumeTask: Task<Void, Never>?
     private(set) var isActive = false
     private var observationTasks: [Task<Void, Never>] = []
+    private var didStart = false
 
-    init() {
+    func start() {
+        guard !didStart else { return }
+        didStart = true
+
         // ホットキー登録
         KeyboardShortcuts.onKeyUp(for: .toggleClicks) {
             Defaults[.clickEnabled].toggle()
         }
 
-        // 設定変更の監視を開始
         startObserving()
     }
 
@@ -30,7 +33,8 @@ final class ClickManager {
 
         // クリックイベントストリームを作成
         let (stream, cancel) = createMouseEventStream(
-            matching: [.leftMouseDown, .rightMouseDown]
+            matching: [.leftMouseDown, .rightMouseDown],
+            bufferingNewest: 32
         )
         clickStreamCancel = cancel
 
@@ -73,6 +77,11 @@ final class ClickManager {
         observationTasks.forEach { $0.cancel() }
         observationTasks.removeAll()
         deactivate()
+    }
+
+    func screenParametersDidChange() {
+        guard isActive else { return }
+        overlayWindow.screenParametersDidChange()
     }
 
     // Defaults変更の監視

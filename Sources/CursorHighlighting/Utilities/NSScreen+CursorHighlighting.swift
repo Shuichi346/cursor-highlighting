@@ -1,7 +1,20 @@
 import AppKit
+import CoreGraphics
+
+enum CursorScreenID: Hashable {
+    case display(CGDirectDisplayID)
+    case transient(ObjectIdentifier)
+}
 
 @MainActor
 extension NSScreen {
+    var cursorHighlightingID: CursorScreenID {
+        if let displayID = cgDirectDisplayID {
+            return .display(displayID)
+        }
+        return .transient(ObjectIdentifier(self))
+    }
+
     static func containing(_ point: NSPoint) -> NSScreen? {
         screens.first { $0.frame.insetBy(dx: -1, dy: -1).contains(point) }
             ?? screens.min {

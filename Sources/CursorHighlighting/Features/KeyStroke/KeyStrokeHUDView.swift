@@ -4,7 +4,7 @@ import SwiftUI
 struct KeyStrokeEntry: Identifiable, Sendable {
     let id = UUID()
     let text: String
-    let timestamp: Date
+    let expiresAt: ContinuousClock.Instant
 }
 
 // キーストロークHUD表示用SwiftUIビュー
