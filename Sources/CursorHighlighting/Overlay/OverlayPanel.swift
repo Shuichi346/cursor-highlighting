@@ -28,6 +28,11 @@ final class OverlayPanel: NSPanel {
 
     // 表示対象のスクリーンへ移動
     func move(to screen: NSScreen) {
+        guard currentScreen.cursorHighlightingID != screen.cursorHighlightingID
+            || frame != screen.frame
+        else {
+            return
+        }
         currentScreen = screen
         setFrame(screen.frame, display: true)
     }

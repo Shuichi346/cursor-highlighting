@@ -7,12 +7,16 @@ import KeyboardShortcuts
 @Observable
 final class KeyStrokeManager {
     private let overlayWindow = KeyStrokeOverlayWindow()
-    private var eventStreamCancel: (@Sendable () -> Void)?
+    private var eventStreamCancel: (@MainActor () -> Void)?
     private var consumeTask: Task<Void, Never>?
     private(set) var isActive = false
     private var observationTasks: [Task<Void, Never>] = []
+    private var didStart = false
 
-    init() {
+    func start() {
+        guard !didStart else { return }
+        didStart = true
+
         KeyboardShortcuts.onKeyUp(for: .toggleKeyStrokes) {
             Defaults[.keyStrokeEnabled].toggle()
         }
@@ -22,7 +26,7 @@ final class KeyStrokeManager {
 
     // 有効化
     func activate() {
-        guard !isActive else { return }
+        guard didStart, !isActive else { return }
 
         guard let (stream, cancel) = createKeyEventStream() else {
             return
@@ -63,16 +67,12 @@ final class KeyStrokeManager {
         deactivate()
     }
 
+    func screenParametersDidChange() {
+        guard isActive else { return }
+        overlayWindow.screenParametersDidChange()
+    }
+
     private func startObserving() {
-        applyEnabledState(Defaults[.keyStrokeEnabled])
-
-        observationTasks.append(
-            Task { [weak self] in
-                for await enabled in Defaults.updates(.keyStrokeEnabled, initial: false) {
-                    self?.applyEnabledState(enabled)
-                }
-            })
-
         observationTasks.append(
             Task { [weak self] in
                 for await _ in Defaults.updates(.keyStrokeFontSize, initial: false) {
@@ -89,11 +89,4 @@ final class KeyStrokeManager {
             })
     }
 
-    private func applyEnabledState(_ isEnabled: Bool) {
-        if isEnabled {
-            activate()
-        } else {
-            deactivate()
-        }
-    }
 }

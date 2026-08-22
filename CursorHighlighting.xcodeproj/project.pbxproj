@@ -1,0 +1,572 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		09B05C574BD519BCFAFAC374 /* SpotlightOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7BC0F32FAC7F6C6BDAE4E9F /* SpotlightOverlayView.swift */; };
+		0E71CF942652AB47EEAA7F13 /* OverlayPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05A631254E3AB669E92B2214 /* OverlayPanel.swift */; };
+		1C886EE429326870444C3F2B /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = BBD4898D6DAF07250607AC6F /* Defaults */; };
+		281AA13EEFD76770ACEB3C39 /* ClickOverlayWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9206C015F0CFE5575720F649 /* ClickOverlayWindow.swift */; };
+		348F803F40FAAEB122B18EC0 /* OtherSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4ABBC420E390438FFBC846 /* OtherSettingsView.swift */; };
+		388B602B5D43D171C62FB1FB /* KeySymbols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D99D7A601427909F16FC6DA /* KeySymbols.swift */; };
+		479B81EF7342061F70A06E7E /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = 714C7C57C3E4591DBFF97319 /* KeyboardShortcuts */; };
+		4D1CA7FE0FCBA487FCB0522C /* ClickRingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C703B683515B3237F0286773 /* ClickRingView.swift */; };
+		5204E09204C653A2F91B3EF6 /* SettingsWindowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5489043FC5521FBFE1980245 /* SettingsWindowView.swift */; };
+		6D3C74E85E7F49DFF7A562FD /* CGEventBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C645FC5417DBB846EB3D335 /* CGEventBridge.swift */; };
+		7269847E17AD7FA5F078C918 /* ClickManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29441A12034B8AEC024286AC /* ClickManager.swift */; };
+		7AC966C589FCF6D27CBC5ABC /* ScreenReconciliation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9FBAA4664B4A195D691947 /* ScreenReconciliation.swift */; };
+		7B7E0C2E510B060DC38C7E26 /* CursorHighlightingApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D6760F3237A24A6E306227 /* CursorHighlightingApp.swift */; };
+		815CABD8607955CFB0186BFC /* SettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30F0EB5D1278D2A9CD91350 /* SettingsManager.swift */; };
+		82C534CA5FF07F805B485326 /* KeyStrokeSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72FF4D03ADFB563D0FABB2E4 /* KeyStrokeSettingsView.swift */; };
+		8C90725935AEF44395A53AB3 /* ClickSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA72622352AB56A118E4F459 /* ClickSettingsView.swift */; };
+		9011218B4D9A5E9176DB043F /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF15D8C00C24C30FF53CD792 /* AppState.swift */; };
+		AEA643821374A68922FEECB1 /* KeyStrokeOverlayWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7401E67DCB68822A1691C4 /* KeyStrokeOverlayWindow.swift */; };
+		B02B190E241FD517C2635CF4 /* SpotlightOverlayWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27C81AF6A4A478B5353C0007 /* SpotlightOverlayWindow.swift */; };
+		C0472699161FF1FB17862441 /* PermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EAF6C86E589E5A0A7E4E8F4 /* PermissionManager.swift */; };
+		C1122AAB31EAEC11A5E5BF1B /* KeyStrokeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 999967F19D391E8A14D41BDE /* KeyStrokeManager.swift */; };
+		C158FD5C50BE384FBA068A78 /* CodableColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF62BD3ED17FD01F48FC4CC6 /* CodableColor.swift */; };
+		C19DEFDEC43BE4B7965CA2D4 /* SettingsComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACFCDF80012AFDA5FC14E10A /* SettingsComponents.swift */; };
+		C9DA66C47602A45E6A86BEA8 /* NSEventBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB7A3F7EDE970182E39A6476 /* NSEventBridge.swift */; };
+		D82F4F453C032278C5DEA6FC /* SpotlightManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B737AA6BE38DE97A2D5F4BD /* SpotlightManager.swift */; };
+		E0061A33F4648BFE67676FE1 /* KeyStrokeHUDView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76EA81D4FDF4C1628CB0DEDD /* KeyStrokeHUDView.swift */; };
+		E717194FB322A58F55C3C924 /* LaunchAtLogin in Frameworks */ = {isa = PBXBuildFile; productRef = 10B30436E66612864D89427B /* LaunchAtLogin */; };
+		E7A40A538F7DEB75EF34626E /* NSScreen+CursorHighlighting.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58CE0A2B96481E92CBD999D /* NSScreen+CursorHighlighting.swift */; };
+		EC743E669CD441DFA31C972E /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 76ABDFA3172CA5E0C6315314 /* icon.icns */; };
+		ECEFB6FF9E408AD3815DF267 /* SpotlightSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B267F7A5E49A47E277183F2 /* SpotlightSettingsView.swift */; };
+		F69167A6AC601F006460B6D3 /* L10n.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F11CD41381F53DE5943DA58 /* L10n.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		05A631254E3AB669E92B2214 /* OverlayPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayPanel.swift; sourceTree = "<group>"; };
+		0A9FBAA4664B4A195D691947 /* ScreenReconciliation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenReconciliation.swift; sourceTree = "<group>"; };
+		1D99D7A601427909F16FC6DA /* KeySymbols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeySymbols.swift; sourceTree = "<group>"; };
+		27C81AF6A4A478B5353C0007 /* SpotlightOverlayWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotlightOverlayWindow.swift; sourceTree = "<group>"; };
+		27D6760F3237A24A6E306227 /* CursorHighlightingApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CursorHighlightingApp.swift; sourceTree = "<group>"; };
+		29441A12034B8AEC024286AC /* ClickManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClickManager.swift; sourceTree = "<group>"; };
+		5489043FC5521FBFE1980245 /* SettingsWindowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowView.swift; sourceTree = "<group>"; };
+		6B737AA6BE38DE97A2D5F4BD /* SpotlightManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotlightManager.swift; sourceTree = "<group>"; };
+		72FF4D03ADFB563D0FABB2E4 /* KeyStrokeSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyStrokeSettingsView.swift; sourceTree = "<group>"; };
+		76ABDFA3172CA5E0C6315314 /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = icon.icns; path = icon/icon.icns; sourceTree = "<group>"; };
+		76EA81D4FDF4C1628CB0DEDD /* KeyStrokeHUDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyStrokeHUDView.swift; sourceTree = "<group>"; };
+		7B267F7A5E49A47E277183F2 /* SpotlightSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotlightSettingsView.swift; sourceTree = "<group>"; };
+		8EAF6C86E589E5A0A7E4E8F4 /* PermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionManager.swift; sourceTree = "<group>"; };
+		9206C015F0CFE5575720F649 /* ClickOverlayWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClickOverlayWindow.swift; sourceTree = "<group>"; };
+		999967F19D391E8A14D41BDE /* KeyStrokeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyStrokeManager.swift; sourceTree = "<group>"; };
+		9A4ABBC420E390438FFBC846 /* OtherSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherSettingsView.swift; sourceTree = "<group>"; };
+		9C645FC5417DBB846EB3D335 /* CGEventBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGEventBridge.swift; sourceTree = "<group>"; };
+		9F11CD41381F53DE5943DA58 /* L10n.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L10n.swift; sourceTree = "<group>"; };
+		ACFCDF80012AFDA5FC14E10A /* SettingsComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsComponents.swift; sourceTree = "<group>"; };
+		AD7401E67DCB68822A1691C4 /* KeyStrokeOverlayWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyStrokeOverlayWindow.swift; sourceTree = "<group>"; };
+		B30F0EB5D1278D2A9CD91350 /* SettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsManager.swift; sourceTree = "<group>"; };
+		BB7A3F7EDE970182E39A6476 /* NSEventBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSEventBridge.swift; sourceTree = "<group>"; };
+		C703B683515B3237F0286773 /* ClickRingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClickRingView.swift; sourceTree = "<group>"; };
+		C7BC0F32FAC7F6C6BDAE4E9F /* SpotlightOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotlightOverlayView.swift; sourceTree = "<group>"; };
+		CA72622352AB56A118E4F459 /* ClickSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClickSettingsView.swift; sourceTree = "<group>"; };
+		D58CE0A2B96481E92CBD999D /* NSScreen+CursorHighlighting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSScreen+CursorHighlighting.swift"; sourceTree = "<group>"; };
+		DF62BD3ED17FD01F48FC4CC6 /* CodableColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodableColor.swift; sourceTree = "<group>"; };
+		F202851826412376FD6A525E /* CursorHighlighting.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CursorHighlighting.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FF15D8C00C24C30FF53CD792 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4DA3F4180C1B3D5B5E28C20D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				479B81EF7342061F70A06E7E /* KeyboardShortcuts in Frameworks */,
+				E717194FB322A58F55C3C924 /* LaunchAtLogin in Frameworks */,
+				1C886EE429326870444C3F2B /* Defaults in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		2BDDE31304897D828B58E6A6 /* Spotlight */ = {
+			isa = PBXGroup;
+			children = (
+				6B737AA6BE38DE97A2D5F4BD /* SpotlightManager.swift */,
+				C7BC0F32FAC7F6C6BDAE4E9F /* SpotlightOverlayView.swift */,
+				27C81AF6A4A478B5353C0007 /* SpotlightOverlayWindow.swift */,
+			);
+			path = Spotlight;
+			sourceTree = "<group>";
+		};
+		3BC396DA9303176A0BBBEBF9 /* Overlay */ = {
+			isa = PBXGroup;
+			children = (
+				05A631254E3AB669E92B2214 /* OverlayPanel.swift */,
+			);
+			path = Overlay;
+			sourceTree = "<group>";
+		};
+		48CED223B1B035D80D90CD99 /* KeyStroke */ = {
+			isa = PBXGroup;
+			children = (
+				76EA81D4FDF4C1628CB0DEDD /* KeyStrokeHUDView.swift */,
+				999967F19D391E8A14D41BDE /* KeyStrokeManager.swift */,
+				AD7401E67DCB68822A1691C4 /* KeyStrokeOverlayWindow.swift */,
+			);
+			path = KeyStroke;
+			sourceTree = "<group>";
+		};
+		6445964CCBF3400FA0892B98 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				CA72622352AB56A118E4F459 /* ClickSettingsView.swift */,
+				72FF4D03ADFB563D0FABB2E4 /* KeyStrokeSettingsView.swift */,
+				9A4ABBC420E390438FFBC846 /* OtherSettingsView.swift */,
+				ACFCDF80012AFDA5FC14E10A /* SettingsComponents.swift */,
+				B30F0EB5D1278D2A9CD91350 /* SettingsManager.swift */,
+				5489043FC5521FBFE1980245 /* SettingsWindowView.swift */,
+				7B267F7A5E49A47E277183F2 /* SpotlightSettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		65B0E773AFDD282CEB26841C /* Bridge */ = {
+			isa = PBXGroup;
+			children = (
+				9C645FC5417DBB846EB3D335 /* CGEventBridge.swift */,
+				BB7A3F7EDE970182E39A6476 /* NSEventBridge.swift */,
+			);
+			path = Bridge;
+			sourceTree = "<group>";
+		};
+		68002A52909636055347F5F4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F202851826412376FD6A525E /* CursorHighlighting.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		775BA215309BF12C9B06AFF2 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				FF15D8C00C24C30FF53CD792 /* AppState.swift */,
+				27D6760F3237A24A6E306227 /* CursorHighlightingApp.swift */,
+				8EAF6C86E589E5A0A7E4E8F4 /* PermissionManager.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		B93A9268B21751480072ED24 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				76ABDFA3172CA5E0C6315314 /* icon.icns */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		BA032BF59F1D39AC6DD3EFC0 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				BE57CE8BCB0EA4CED994377C /* ClickVisualizer */,
+				48CED223B1B035D80D90CD99 /* KeyStroke */,
+				2BDDE31304897D828B58E6A6 /* Spotlight */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		BA58590A52D7077584E7ED79 /* CursorHighlighting */ = {
+			isa = PBXGroup;
+			children = (
+				775BA215309BF12C9B06AFF2 /* App */,
+				65B0E773AFDD282CEB26841C /* Bridge */,
+				BA032BF59F1D39AC6DD3EFC0 /* Features */,
+				3BC396DA9303176A0BBBEBF9 /* Overlay */,
+				6445964CCBF3400FA0892B98 /* Settings */,
+				E5177532E8F0C4B6A3B44B25 /* Utilities */,
+			);
+			name = CursorHighlighting;
+			path = Sources/CursorHighlighting;
+			sourceTree = "<group>";
+		};
+		BE57CE8BCB0EA4CED994377C /* ClickVisualizer */ = {
+			isa = PBXGroup;
+			children = (
+				29441A12034B8AEC024286AC /* ClickManager.swift */,
+				9206C015F0CFE5575720F649 /* ClickOverlayWindow.swift */,
+				C703B683515B3237F0286773 /* ClickRingView.swift */,
+			);
+			path = ClickVisualizer;
+			sourceTree = "<group>";
+		};
+		C3292B207B539B7BF70423BB = {
+			isa = PBXGroup;
+			children = (
+				BA58590A52D7077584E7ED79 /* CursorHighlighting */,
+				B93A9268B21751480072ED24 /* Resources */,
+				68002A52909636055347F5F4 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		E5177532E8F0C4B6A3B44B25 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				DF62BD3ED17FD01F48FC4CC6 /* CodableColor.swift */,
+				1D99D7A601427909F16FC6DA /* KeySymbols.swift */,
+				9F11CD41381F53DE5943DA58 /* L10n.swift */,
+				D58CE0A2B96481E92CBD999D /* NSScreen+CursorHighlighting.swift */,
+				0A9FBAA4664B4A195D691947 /* ScreenReconciliation.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		360D6AD297AC87C66FF5C427 /* CursorHighlighting */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7A896C35402FDE0903BA8AE6 /* Build configuration list for PBXNativeTarget "CursorHighlighting" */;
+			buildPhases = (
+				30B7CDEEB722D3558D6F6110 /* Sources */,
+				AA4E23F5C1F6408A383759B7 /* Resources */,
+				4DA3F4180C1B3D5B5E28C20D /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CursorHighlighting;
+			packageProductDependencies = (
+				714C7C57C3E4591DBFF97319 /* KeyboardShortcuts */,
+				10B30436E66612864D89427B /* LaunchAtLogin */,
+				BBD4898D6DAF07250607AC6F /* Defaults */,
+			);
+			productName = CursorHighlighting;
+			productReference = F202851826412376FD6A525E /* CursorHighlighting.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F30C360C5F2124A7B451B4F0 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					360D6AD297AC87C66FF5C427 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Manual;
+					};
+				};
+			};
+			buildConfigurationList = AA7247CD65518DA51397B124 /* Build configuration list for PBXProject "CursorHighlighting" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = C3292B207B539B7BF70423BB;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				3B0909F18BE2F00488F4D14A /* XCRemoteSwiftPackageReference "Defaults" */,
+				2541BC5D190027DF5D453068 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */,
+				41FCCD7BE37494BCC55E737C /* XCRemoteSwiftPackageReference "LaunchAtLogin-Modern" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 68002A52909636055347F5F4 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				360D6AD297AC87C66FF5C427 /* CursorHighlighting */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AA4E23F5C1F6408A383759B7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EC743E669CD441DFA31C972E /* icon.icns in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		30B7CDEEB722D3558D6F6110 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9011218B4D9A5E9176DB043F /* AppState.swift in Sources */,
+				6D3C74E85E7F49DFF7A562FD /* CGEventBridge.swift in Sources */,
+				7269847E17AD7FA5F078C918 /* ClickManager.swift in Sources */,
+				281AA13EEFD76770ACEB3C39 /* ClickOverlayWindow.swift in Sources */,
+				4D1CA7FE0FCBA487FCB0522C /* ClickRingView.swift in Sources */,
+				8C90725935AEF44395A53AB3 /* ClickSettingsView.swift in Sources */,
+				C158FD5C50BE384FBA068A78 /* CodableColor.swift in Sources */,
+				7B7E0C2E510B060DC38C7E26 /* CursorHighlightingApp.swift in Sources */,
+				E0061A33F4648BFE67676FE1 /* KeyStrokeHUDView.swift in Sources */,
+				C1122AAB31EAEC11A5E5BF1B /* KeyStrokeManager.swift in Sources */,
+				AEA643821374A68922FEECB1 /* KeyStrokeOverlayWindow.swift in Sources */,
+				82C534CA5FF07F805B485326 /* KeyStrokeSettingsView.swift in Sources */,
+				388B602B5D43D171C62FB1FB /* KeySymbols.swift in Sources */,
+				F69167A6AC601F006460B6D3 /* L10n.swift in Sources */,
+				C9DA66C47602A45E6A86BEA8 /* NSEventBridge.swift in Sources */,
+				E7A40A538F7DEB75EF34626E /* NSScreen+CursorHighlighting.swift in Sources */,
+				348F803F40FAAEB122B18EC0 /* OtherSettingsView.swift in Sources */,
+				0E71CF942652AB47EEAA7F13 /* OverlayPanel.swift in Sources */,
+				C0472699161FF1FB17862441 /* PermissionManager.swift in Sources */,
+				7AC966C589FCF6D27CBC5ABC /* ScreenReconciliation.swift in Sources */,
+				C19DEFDEC43BE4B7965CA2D4 /* SettingsComponents.swift in Sources */,
+				815CABD8607955CFB0186BFC /* SettingsManager.swift in Sources */,
+				5204E09204C653A2F91B3EF6 /* SettingsWindowView.swift in Sources */,
+				D82F4F453C032278C5DEA6FC /* SpotlightManager.swift in Sources */,
+				09B05C574BD519BCFAFAC374 /* SpotlightOverlayView.swift in Sources */,
+				B02B190E241FD517C2635CF4 /* SpotlightOverlayWindow.swift in Sources */,
+				ECEFB6FF9E408AD3815DF267 /* SpotlightSettingsView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		0325276BFBC15EFDFA09148F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		396639379690F2B93A43426E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.shuichi.cursor-highlighting";
+				PRODUCT_NAME = CursorHighlighting;
+				SDKROOT = macosx;
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
+			};
+			name = Release;
+		};
+		5CB5D35DAAE51EF987DA25E4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = YES;
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		6AAD1477EFE78BD86806C5E6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.shuichi.cursor-highlighting";
+				PRODUCT_NAME = CursorHighlighting;
+				SDKROOT = macosx;
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		7A896C35402FDE0903BA8AE6 /* Build configuration list for PBXNativeTarget "CursorHighlighting" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6AAD1477EFE78BD86806C5E6 /* Debug */,
+				396639379690F2B93A43426E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		AA7247CD65518DA51397B124 /* Build configuration list for PBXProject "CursorHighlighting" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5CB5D35DAAE51EF987DA25E4 /* Debug */,
+				0325276BFBC15EFDFA09148F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		2541BC5D190027DF5D453068 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sindresorhus/KeyboardShortcuts";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.1;
+			};
+		};
+		3B0909F18BE2F00488F4D14A /* XCRemoteSwiftPackageReference "Defaults" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sindresorhus/Defaults";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.0.9;
+			};
+		};
+		41FCCD7BE37494BCC55E737C /* XCRemoteSwiftPackageReference "LaunchAtLogin-Modern" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sindresorhus/LaunchAtLogin-Modern";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		10B30436E66612864D89427B /* LaunchAtLogin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 41FCCD7BE37494BCC55E737C /* XCRemoteSwiftPackageReference "LaunchAtLogin-Modern" */;
+			productName = LaunchAtLogin;
+		};
+		714C7C57C3E4591DBFF97319 /* KeyboardShortcuts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2541BC5D190027DF5D453068 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */;
+			productName = KeyboardShortcuts;
+		};
+		BBD4898D6DAF07250607AC6F /* Defaults */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3B0909F18BE2F00488F4D14A /* XCRemoteSwiftPackageReference "Defaults" */;
+			productName = Defaults;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = F30C360C5F2124A7B451B4F0 /* Project object */;
+}

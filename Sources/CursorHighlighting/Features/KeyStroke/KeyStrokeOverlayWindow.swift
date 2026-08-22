@@ -10,6 +10,7 @@ final class KeyStrokeOverlayWindow {
     private var hostingView: NSHostingView<KeyStrokeHUDView>?
     var entries: [KeyStrokeEntry] = []
     private var cleanupTask: Task<Void, Never>?
+    private let clock = ContinuousClock()
 
     // オーバーレイを表示
     func show() {
@@ -33,7 +34,6 @@ final class KeyStrokeOverlayWindow {
         self.panel = newPanel
         self.hostingView = hosting
 
-        startCleanupTask()
     }
 
     // オーバーレイを非表示
@@ -49,11 +49,16 @@ final class KeyStrokeOverlayWindow {
     // エントリを追加
     func addEntry(_ text: String) {
         moveToCurrentScreenIfNeeded()
-        entries.append(KeyStrokeEntry(text: text, timestamp: Date()))
+        entries.append(
+            KeyStrokeEntry(
+                text: text,
+                expiresAt: clock.now.advanced(by: .seconds(2))
+            ))
         if entries.count > 10 {
             entries.removeFirst()
         }
         refreshView()
+        scheduleNextCleanup()
     }
 
     // フォントサイズ・テーマ変更を即時反映
@@ -79,23 +84,40 @@ final class KeyStrokeOverlayWindow {
         )
     }
 
-    private func startCleanupTask() {
-        cleanupTask = Task { [weak self] in
-            while !Task.isCancelled {
-                try? await Task.sleep(for: .milliseconds(500))
-                guard let self = self else { break }
-                let now = Date()
-                let previousCount = self.entries.count
-                self.entries.removeAll { now.timeIntervalSince($0.timestamp) > 2.0 }
-                if self.entries.count != previousCount {
-                    self.refreshView()
-                }
+    func screenParametersDidChange() {
+        moveToCurrentScreenIfNeeded()
+    }
+
+    private func scheduleNextCleanup() {
+        cleanupTask?.cancel()
+        guard let nextExpiration = entries.map(\.expiresAt).min() else {
+            cleanupTask = nil
+            return
+        }
+
+        let clock = self.clock
+        cleanupTask = Task { [weak self, clock] in
+            do {
+                try await clock.sleep(until: nextExpiration)
+            } catch {
+                return
             }
+            guard let self else { return }
+            let previousCount = self.entries.count
+            let now = self.clock.now
+            self.entries.removeAll { $0.expiresAt <= now }
+            if self.entries.count != previousCount {
+                self.refreshView()
+            }
+            self.scheduleNextCleanup()
         }
     }
 
     private func moveToCurrentScreenIfNeeded() {
-        guard let panel, let screen = preferredScreen(), screen !== panel.currentScreen else {
+        guard let panel, let screen = preferredScreen(),
+            screen.cursorHighlightingID != panel.currentScreen.cursorHighlightingID
+                || screen.frame != panel.currentScreen.frame
+        else {
             return
         }
         panel.move(to: screen)

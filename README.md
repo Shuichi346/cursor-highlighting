@@ -84,7 +84,7 @@ The app runs entirely from the menu bar with no Dock icon, staying out of your w
 | **Xcode** | 26.4+ (provides Swift 6.3 toolchain and macOS 26 SDK) |
 
 > [!IMPORTANT]
-> This app is **not sandboxed**. It requires Accessibility permission to monitor mouse and keyboard events via `CGEventTap`.
+> This app is **not sandboxed**. The Key Strokes feature requires Input Monitoring permission; the app requests it only when that feature is enabled.
 
 ---
 
@@ -101,38 +101,44 @@ cd cursor-highlighting
 
 | Command | Description |
 |---|---|
-| `make run` | Build and run the app directly |
-| `make app` | Create a `.app` bundle at `build/CursorHighlighting.app` |
-| `make build-release` | Build a release binary without bundling |
+| `make run` | Build a Debug `.app` with Xcode and launch it |
+| `make app` | Build an ad-hoc signed Release app at `build/CursorHighlighting.app` |
+| `make verify` | Build and strictly verify the app layout and signature |
+| `make test` | Run the Swift package test suite |
+| `make swift-build` | Compile the SwiftPM development target |
+| `make build-release` | Build the Xcode Release app |
 | `make clean` | Remove all build artifacts |
 
 ### Quick Start
 
 ```bash
-# Run directly from source
+# Build and launch a Debug app bundle
 make run
 
 # Or build the .app bundle and open it
 make app
 open build/CursorHighlighting.app
 
-# Install to Applications folder
-cp -r build/CursorHighlighting.app /Applications/
+# Verify before installing, then preserve the signed bundle while copying
+make verify
+/usr/bin/ditto build/CursorHighlighting.app /Applications/CursorHighlighting.app
 ```
+
+For Developer ID distribution, run `make archive` with `DEVELOPMENT_TEAM` and `CODE_SIGN_IDENTITY`. To submit that archive for notarization, also provide a `NOTARY_PROFILE` created with `notarytool` and run `make notarize`.
 
 ---
 
 ## Permissions
 
-This app requires **Accessibility** permission to monitor global mouse and keyboard events.
+Mouse Spotlight and Mouse Clicks do not prompt for a privacy permission. **Key Strokes** uses a passive event tap and requires **Input Monitoring** permission.
 
-On first launch, you will be prompted to grant access. If the prompt doesn't appear or you need to grant it manually:
+The app requests access when Key Strokes is first enabled. If the prompt doesn't appear or you need to grant it manually:
 
 1. Open **System Settings**
-2. Navigate to **Privacy & Security → Accessibility**
+2. Navigate to **Privacy & Security → Input Monitoring**
 3. Enable **Cursor Highlighting**
 
-The app polls for permission status and will activate features automatically once access is granted.
+The app polls only while a request is pending and rechecks the permission when it becomes active, so granting or revoking access is reflected without restarting.
 
 ---
 

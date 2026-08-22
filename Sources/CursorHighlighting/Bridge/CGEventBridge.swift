@@ -12,45 +12,13 @@ struct BridgedKeyEvent: Sendable {
 }
 
 // AsyncStream.ContinuationをCコールバックに渡すためのボックス型
-// Continuationはスレッドセーフ（yieldはどのスレッドからでも安全に呼べる）
-// @unchecked Sendableはこのアプリケーション全体で唯一ここだけ使用
+// Cコールバック境界に限定して安全性を管理する
 final class EventTapContext: @unchecked Sendable {
     let continuation: AsyncStream<BridgedKeyEvent>.Continuation
     var eventTap: CFMachPort?
 
     init(_ continuation: AsyncStream<BridgedKeyEvent>.Continuation) {
         self.continuation = continuation
-    }
-}
-
-// CGEventTap関連のCFオブジェクトを@Sendableクロージャに安全に渡すためのボックス型
-// CFMachPort・CFRunLoopSourceは実質スレッドセーフだがSendable準拠がない
-final class EventTapBox: @unchecked Sendable {
-    let eventTap: CFMachPort
-    let runLoopSource: CFRunLoopSource
-    let pointerBits: Int
-    private let lock = NSLock()
-    private var isCancelled = false
-
-    init(eventTap: CFMachPort, runLoopSource: CFRunLoopSource, pointerBits: Int) {
-        self.eventTap = eventTap
-        self.runLoopSource = runLoopSource
-        self.pointerBits = pointerBits
-    }
-
-    func cancel(_ continuation: AsyncStream<BridgedKeyEvent>.Continuation) {
-        lock.lock()
-        defer { lock.unlock() }
-
-        guard !isCancelled else { return }
-        isCancelled = true
-
-        CGEvent.tapEnable(tap: eventTap, enable: false)
-        CFRunLoopRemoveSource(CFRunLoopGetMain(), runLoopSource, .commonModes)
-
-        let ptr = UnsafeMutableRawPointer(bitPattern: pointerBits)!
-        Unmanaged<EventTapContext>.fromOpaque(ptr).release()
-        continuation.finish()
     }
 }
 
@@ -104,7 +72,10 @@ private func cgEventCallback(
 // キーイベントのAsyncStreamを生成するファクトリ関数
 // 戻り値がnilの場合はアクセシビリティ権限が未付与
 @MainActor
-func createKeyEventStream() -> (stream: AsyncStream<BridgedKeyEvent>, cancel: @Sendable () -> Void)?
+func createKeyEventStream() -> (
+    stream: AsyncStream<BridgedKeyEvent>,
+    cancel: @MainActor () -> Void
+)?
 {
     let (stream, continuation) = AsyncStream.makeStream(
         of: BridgedKeyEvent.self,
@@ -140,16 +111,15 @@ func createKeyEventStream() -> (stream: AsyncStream<BridgedKeyEvent>, cancel: @S
     CFRunLoopAddSource(CFRunLoopGetMain(), runLoopSource, .commonModes)
     CGEvent.tapEnable(tap: eventTap, enable: true)
 
-    // 非Sendable型をSendableボックスに格納してキャプチャ
-    let tapBox = EventTapBox(
-        eventTap: eventTap,
-        runLoopSource: runLoopSource,
-        pointerBits: Int(bitPattern: pointer)
-    )
-
-    // キャンセル時のクリーンアップクロージャ
-    let cancel: @Sendable () -> Void = {
-        tapBox.cancel(continuation)
+    // イベントタップはメインRunLoop上にあるため、同じMainActorから破棄する
+    var isCancelled = false
+    let cancel: @MainActor @Sendable () -> Void = {
+        guard !isCancelled else { return }
+        isCancelled = true
+        CGEvent.tapEnable(tap: eventTap, enable: false)
+        CFRunLoopRemoveSource(CFRunLoopGetMain(), runLoopSource, .commonModes)
+        Unmanaged<EventTapContext>.fromOpaque(pointer).release()
+        continuation.finish()
     }
 
     return (stream, cancel)

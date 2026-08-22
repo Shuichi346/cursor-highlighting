@@ -1,23 +1,30 @@
 import AppKit
-import Defaults
-
 // クリックリング表示用のオーバーレイウィンドウ
 @MainActor
 final class ClickOverlayWindow {
-    private var panels: [ObjectIdentifier: OverlayPanel] = [:]
+    private var panels: [CursorScreenID: OverlayPanel] = [:]
+    private var isVisible = false
 
     // オーバーレイを表示
     func show() {
+        isVisible = true
+        reconcileScreens()
         guard let screen = preferredScreen(for: NSEvent.mouseLocation) else { return }
         _ = panel(for: screen)
     }
 
     // オーバーレイを非表示
     func hide() {
+        isVisible = false
         for panel in panels.values {
             panel.hideOverlay()
         }
         panels.removeAll()
+    }
+
+    func screenParametersDidChange() {
+        guard isVisible else { return }
+        reconcileScreens()
     }
 
     // 指定位置にクリックリングを表示
@@ -35,7 +42,7 @@ final class ClickOverlayWindow {
     }
 
     private func panel(for screen: NSScreen) -> OverlayPanel {
-        let key = ObjectIdentifier(screen)
+        let key = screen.cursorHighlightingID
 
         if let panel = panels[key] {
             panel.move(to: screen)
@@ -49,6 +56,25 @@ final class ClickOverlayWindow {
         panel.showFullScreen()
         panels[key] = panel
         return panel
+    }
+
+    private func reconcileScreens() {
+        let screensByID = Dictionary(
+            uniqueKeysWithValues: NSScreen.screens.map { ($0.cursorHighlightingID, $0) })
+        let reconciliation = ScreenReconciliation(
+            existing: Set(panels.keys),
+            current: Set(screensByID.keys)
+        )
+
+        for key in reconciliation.removed {
+            panels.removeValue(forKey: key)?.hideOverlay()
+        }
+
+        for key in reconciliation.retained {
+            if let screen = screensByID[key] {
+                panels[key]?.move(to: screen)
+            }
+        }
     }
 
     private func preferredScreen(for point: NSPoint) -> NSScreen? {

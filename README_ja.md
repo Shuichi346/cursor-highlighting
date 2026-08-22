@@ -84,7 +84,7 @@ Cursor Highlightingは、プレゼンテーション、画面録画、ライブ�
 | **Xcode** | 26.4+ (Swift 6.3ツールチェーンとmacOS 26 SDKを提供) |
 
 > [!IMPORTANT]
-> このアプリは**サンドボックス化されていません**。`CGEventTap`を介してマウスとキーボードイベントを監視するためにアクセシビリティ権限が必要です。
+> このアプリは**サンドボックス化されていません**。キーストローク機能には入力監視権限が必要で、この機能を有効にしたときだけ権限を要求します。
 
 ---
 
@@ -101,38 +101,44 @@ cd cursor-highlighting
 
 | コマンド | 説明 |
 |---|---|
-| `make run` | アプリを直接ビルドして実行 |
-| `make app` | `build/CursorHighlighting.app`に`.app`バンドルを作成 |
-| `make build-release` | バンドル化せずにリリースバイナリをビルド |
+| `make run` | XcodeでDebug `.app`をビルドして起動 |
+| `make app` | `build/CursorHighlighting.app`にアドホック署名済みReleaseアプリを作成 |
+| `make verify` | アプリをビルドし、レイアウトと署名を厳格に検証 |
+| `make test` | Swiftパッケージのテストを実行 |
+| `make swift-build` | SwiftPMの開発用ターゲットをコンパイル |
+| `make build-release` | XcodeのReleaseアプリをビルド |
 | `make clean` | すべてのビルド生成物を削除 |
 
 ### クイックスタート
 
 ```bash
-# ソースから直接実行
+# Debugアプリバンドルをビルドして起動
 make run
 
 # または.appバンドルをビルドして開く
 make app
 open build/CursorHighlighting.app
 
-# アプリケーションフォルダへインストール
-cp -r build/CursorHighlighting.app /Applications/
+# 検証後、署名済みバンドルを保持してインストール
+make verify
+/usr/bin/ditto build/CursorHighlighting.app /Applications/CursorHighlighting.app
 ```
+
+Developer ID配布では、`DEVELOPMENT_TEAM`と`CODE_SIGN_IDENTITY`を指定して`make archive`を実行します。公証へ送信する場合は、`notarytool`で作成した`NOTARY_PROFILE`も指定して`make notarize`を実行します。
 
 ---
 
 ## 権限
 
-このアプリはグローバルなマウスとキーボードイベントを監視するために**アクセシビリティ**権限が必要です。
+マウススポットライトとマウスクリックはプライバシー権限を要求しません。**キーストローク**は受動的なイベントタップを使用し、**入力監視**権限が必要です。
 
-初回起動時にアクセスを許可するよう促されます。プロンプトが表示されない場合や手動で許可する必要がある場合：
+キーストロークを初めて有効にしたときにアクセスを要求します。プロンプトが表示されない場合や手動で許可する必要がある場合：
 
 1. **システム設定**を開く
-2. **プライバシーとセキュリティ → アクセシビリティ**に移動
+2. **プライバシーとセキュリティ → 入力監視**に移動
 3. **Cursor Highlighting**を有効にする
 
-アプリは権限ステータスをポーリングし、アクセスが許可されると自動的に機能を有効化します。
+アプリは権限要求中だけポーリングし、アクティブになったときにも権限を再確認するため、許可と取り消しが再起動なしで反映されます。
 
 ---
 

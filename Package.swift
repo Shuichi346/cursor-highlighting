@@ -8,9 +8,9 @@ let package = Package(
         .executable(name: "CursorHighlighting", targets: ["CursorHighlighting"])
     ],
     dependencies: [
-        .package(url: "https://github.com/sindresorhus/KeyboardShortcuts", from: "2.4.0"),
+        .package(url: "https://github.com/sindresorhus/KeyboardShortcuts", from: "3.0.1"),
         .package(url: "https://github.com/sindresorhus/LaunchAtLogin-Modern", from: "1.1.0"),
-        .package(url: "https://github.com/sindresorhus/Defaults", from: "9.0.0"),
+        .package(url: "https://github.com/sindresorhus/Defaults", from: "9.0.9"),
     ],
     targets: [
         .executableTarget(
@@ -21,7 +21,12 @@ let package = Package(
                 "Defaults",
             ],
             path: "Sources/CursorHighlighting"
-        )
+        ),
+        .testTarget(
+            name: "CursorHighlightingTests",
+            dependencies: ["CursorHighlighting"],
+            path: "Tests/CursorHighlightingTests"
+        ),
     ],
     swiftLanguageModes: [.v6]
 )

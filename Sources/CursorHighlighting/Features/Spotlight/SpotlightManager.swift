@@ -9,14 +9,17 @@ final class SpotlightManager {
     private let overlayWindow = SpotlightOverlayWindow()
     private(set) var isActive = false
     private var observationTasks: [Task<Void, Never>] = []
+    private var didStart = false
 
-    init() {
+    func start() {
+        guard !didStart else { return }
+        didStart = true
+
         // ホットキー登録
         KeyboardShortcuts.onKeyUp(for: .toggleSpotlight) { [weak self] in
             self?.toggle()
         }
 
-        // 設定変更の監視を開始
         startObserving()
     }
 
@@ -43,6 +46,11 @@ final class SpotlightManager {
         observationTasks.forEach { $0.cancel() }
         observationTasks.removeAll()
         deactivate()
+    }
+
+    func screenParametersDidChange() {
+        guard isActive else { return }
+        overlayWindow.screenParametersDidChange()
     }
 
     // Defaults変更を監視してアクティブ状態と設定を反映

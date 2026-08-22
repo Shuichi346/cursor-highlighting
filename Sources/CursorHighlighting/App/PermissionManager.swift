@@ -1,37 +1,58 @@
 import AppKit
-import ApplicationServices
+import CoreGraphics
 
-// アクセシビリティ権限の確認・要求を行うマネージャー
+struct InputMonitoringAuthorization {
+    let preflight: () -> Bool
+    let request: () -> Bool
+
+    @MainActor static let live = Self(
+        preflight: { CGPreflightListenEventAccess() },
+        request: { CGRequestListenEventAccess() }
+    )
+}
+
+// 入力監視権限の確認・要求を行うマネージャー
 @MainActor
 @Observable
 final class PermissionManager {
-    var isAccessibilityGranted: Bool = false
+    private(set) var isInputMonitoringGranted = false
+    var onAuthorizationChange: ((Bool) -> Void)?
     private var pollTask: Task<Void, Never>?
+    private let authorization: InputMonitoringAuthorization
 
-    // アクセシビリティ権限を確認し、未付与なら要求
-    func checkAndRequestAccessibility() {
-        isAccessibilityGranted = AXIsProcessTrusted()
+    init(authorization: InputMonitoringAuthorization = .live) {
+        self.authorization = authorization
+    }
 
-        guard !isAccessibilityGranted else {
+    @discardableResult
+    func refreshInputMonitoringStatus() -> Bool {
+        updateStatus(authorization.preflight())
+        return isInputMonitoringGranted
+    }
+
+    func requestInputMonitoring() {
+        let granted = authorization.request() || authorization.preflight()
+        updateStatus(granted)
+
+        guard !granted else {
             stopPolling()
             return
         }
-
-        // Swift 6ではkAXTrustedCheckOptionPromptが可変グローバル変数として扱われるため、定数文字列を直接使用
-        let options = ["AXTrustedCheckOptionPrompt": true] as CFDictionary
-        _ = AXIsProcessTrustedWithOptions(options)
         startPolling()
     }
 
-    // 権限が付与されるまで定期的にポーリング
     private func startPolling() {
         pollTask?.cancel()
         pollTask = Task { [weak self] in
             while !Task.isCancelled {
-                try? await Task.sleep(for: .seconds(2))
+                do {
+                    try await Task.sleep(for: .seconds(1))
+                } catch {
+                    return
+                }
                 guard let self = self else { break }
-                if AXIsProcessTrusted() {
-                    self.isAccessibilityGranted = true
+                if self.authorization.preflight() {
+                    self.updateStatus(true)
                     self.pollTask = nil
                     break
                 }
@@ -39,9 +60,14 @@ final class PermissionManager {
         }
     }
 
-    // ポーリングを停止
     func stopPolling() {
         pollTask?.cancel()
         pollTask = nil
+    }
+
+    private func updateStatus(_ isGranted: Bool) {
+        guard isInputMonitoringGranted != isGranted else { return }
+        isInputMonitoringGranted = isGranted
+        onAuthorizationChange?(isGranted)
     }
 }
