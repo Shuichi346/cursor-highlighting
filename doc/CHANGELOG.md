@@ -1,20 +1,21 @@
 # Changelog
 
-## [Unreleased]
+## Fixed
 
-### Added
-- Added a native Xcode macOS application target, reproducible SwiftPM lockfiles, strict package/signature verification, and focused regression tests.
-
-### Changed
-- Updated KeyboardShortcuts to 3.0.1, Defaults to 9.0.9, and transitive SwiftSyntax to 603.0.2.
-- Key Strokes now requests the narrower Input Monitoring permission only when enabled and rechecks permission on app activation.
-
-### Fixed
 - **Distribution:** Replaced manual SwiftPM app assembly with Xcode packaging, placing dependency bundles under `Contents/Resources` and producing a hardened-runtime signature with sealed resources.
 - **Input / Displays:** Preserved recorded click coordinates and reconciled overlay panels after display connection, removal, rearrangement, or resolution changes.
 - **Spotlight:** Coalesced movement updates to display refresh, retained only the newest movement event, cached settings, updated only the active/previous display, and replaced 30 ring fills with one radial gradient.
 - **Lifecycle:** Deferred monitors, overlays, and permission work until application launch completed; consolidated permission polling and detected later revocation.
 - **Windows / HUD:** Reused closed or minimized Settings windows and replaced the repeating keystroke cleanup poll with monotonic expiry scheduling.
+
+## Added
+
+- Added a native Xcode macOS application target, reproducible SwiftPM lockfiles, strict package/signature verification, and focused regression tests.
+
+## Changed
+
+- Updated KeyboardShortcuts to 3.0.1, Defaults to 9.0.9, and transitive SwiftSyntax to 603.0.2.
+- Changed Key Strokes to request the narrower Input Monitoring permission only when enabled and recheck permission on app activation.
 
 ## [1.0.6] - 2026-04-21
 
