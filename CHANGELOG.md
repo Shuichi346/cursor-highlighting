@@ -2,11 +2,13 @@
 
 The detailed release history is maintained in [`doc/CHANGELOG.md`](doc/CHANGELOG.md).
 
-## Fixed
+## DATE UNKNOWN
+
+### Fixed
 
 - Fixed mouse-event coordinates, display reconciliation, Spotlight rendering load, deferred Input Monitoring, Settings window reuse, and keystroke HUD expiry scheduling.
 
-## Changed
+### Changed
 
 - Replaced manual SwiftPM app assembly with an Xcode-managed, hardened-runtime application bundle and added strict bundle verification.
 - Updated package dependencies and lockfiles, and added focused regression tests.
